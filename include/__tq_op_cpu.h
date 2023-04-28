@@ -1,0 +1,31 @@
+#ifndef CPU_TQMAT_H_
+#define CPU_TQMAT_H_
+
+#include "__tq_datatypes.h"
+#include "__tq_op_cpu.h"
+
+void __TQ_CPUMat_Add(struct TQ_Matrix one,
+                     struct TQ_Matrix other,
+                     struct TQ_Matrix *result);
+
+void __TQ_CPUMat_Sub(struct TQ_Matrix one,
+                     struct TQ_Matrix other,
+                     struct TQ_Matrix *result);
+
+void __TQ_CPUMat_ProdNum(struct TQ_Matrix one,
+                         float factor,
+                         struct TQ_Matrix *result);
+
+void __TQ_CPUMat_Prod(struct TQ_Matrix one,
+                      struct TQ_Matrix other,
+                      struct TQ_Matrix *result);
+
+float TQ_Matrix_GetElem(struct TQ_Matrix matrix,
+                        unsigned int *indices,
+                        unsigned int num_ind);
+
+void TQ_Matrix_SetElem(struct TQ_Matrix *matrix,
+                       float value,
+                       unsigned int *indices,
+                       unsigned int num_ind);
+#endif
