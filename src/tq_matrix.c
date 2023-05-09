@@ -192,51 +192,83 @@ void __TQ_MatProd_TEST(struct TQ_Matrix one,
     // OK!
 }
 
+unsigned char __TQ_Send_To_CPU(struct TQ_Matrix one,
+                               struct TQ_Matrix other)
+{
+    unsigned char to_cpu;
+    to_cpu = ((one.type != TQ_GPU_Matrix) || (other.type != TQ_GPU_Matrix));
+    return to_cpu;
+}
+
 void TQ_Matrix_Add(struct TQ_Matrix one,
                    struct TQ_Matrix other,
                    struct TQ_Matrix *result)
 {
-    // Comprobaciones
     __TQ_MatAdd_TEST(one, other);
-
-    // TODO diferencias entre GPU/CPU mat.
-    __TQ_CPUMat_Add(one, other, result);
+    if (__TQ_Send_To_CPU(one, other))
+    {
+        __TQ_CPUMat_Add(one, other, result);
+    }
+    else
+    {
+        // TODO
+    }
 }
 
 void TQ_Matrix_Sub(struct TQ_Matrix one,
                    struct TQ_Matrix other,
                    struct TQ_Matrix *result)
 {
-    // Comprobaciones
     __TQ_MatAdd_TEST(one, other);
-
-    // TODO diferencias entre GPU/CPU mat.
-    __TQ_CPUMat_Sub(one, other, result);
+    if (__TQ_Send_To_CPU(one, other))
+    {
+        __TQ_CPUMat_Sub(one, other, result);
+    }
+    else
+    {
+        // TODO
+    }
 }
 
 void TQ_Matrix_ProdNum(struct TQ_Matrix one,
                        float factor,
                        struct TQ_Matrix *result)
 {
-    // TODO diferencias entre GPU/CPU mat.
-    __TQ_CPUMat_ProdNum(one, factor, result);
+    __TQ_CPUMat_ProdNum(one, factor, result); // Por defecto, será más rápido.
 }
 
 void TQ_Matrix_Prod(struct TQ_Matrix one,
                     struct TQ_Matrix other,
                     struct TQ_Matrix *result)
 {
-    __TQ_MatProd_TEST(one, other);
+    enum TQ_Matrix_type type;
+    unsigned char to_cpu;
 
-    // TODO diferencias GPU/CPU
-    enum TQ_Matrix_type type = one.type; // default (espero que sea CPU)
+    __TQ_MatProd_TEST(one, other);
+    to_cpu = __TQ_Send_To_CPU(one, other);
+
+    if (to_cpu)
+    {
+        type = TQ_CPU_Matrix;
+    }
+    else
+    {
+        type = TQ_GPU_Matrix;
+    }
 
     // Reservamos memoria.
     unsigned int dimensions[] = {one.dimensions[0], other.dimensions[1]};
     TQ_Matrix_Create(result, dimensions, 2, type);
 
     // Aplicamos el producto de matrices
-    __TQ_CPUMat_Prod(one, other, result);
+    if (to_cpu)
+    {
+        __TQ_CPUMat_Prod(one, other, result);
+    }
+    else
+    {
+        // TODO
+    }
 }
 
 /**
