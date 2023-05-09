@@ -3,11 +3,10 @@
 
 #include "../include/__tq_op_cpu.h"
 
-unsigned long __TQ_Matrix_Pos(struct TQ_Matrix matrix,
-                              unsigned int *indices,
-                              unsigned int num_ind)
+unsigned long __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
+                                     unsigned int *indices,
+                                     unsigned int num_ind)
 {
-    // Cálculo de la posición de la matriz.
     unsigned long dims_prod = matrix.dims_prod;
     unsigned long i, position = 0;
     for (i = 0; i < matrix.num_dims; i++)
@@ -17,6 +16,23 @@ unsigned long __TQ_Matrix_Pos(struct TQ_Matrix matrix,
     }
 
     return position;
+}
+
+void __TQ_Matrix_PosToIndex(struct TQ_Matrix matrix,
+                            unsigned int position,
+                            unsigned int *indices)
+{
+    unsigned long i;
+    unsigned long dims_prod = matrix.dims_prod;
+    unsigned int pos = position;
+
+    for (i = 0; i < matrix.num_dims - 1; i++)
+    {
+        dims_prod = dims_prod / matrix.dimensions[i];
+        indices[i] = pos / dims_prod;
+        pos = pos % dims_prod;
+    }
+    indices[matrix.num_dims - 1] = pos;
 }
 
 float TQ_Matrix_GetElem(struct TQ_Matrix matrix,
@@ -45,7 +61,7 @@ float TQ_Matrix_GetElem(struct TQ_Matrix matrix,
         }
     }
 
-    return matrix.h_mem[__TQ_Matrix_Pos(matrix, indices, num_ind)];
+    return matrix.h_mem[__TQ_Matrix_IndexToPos(matrix, indices, num_ind)];
 }
 
 void TQ_Matrix_SetElem(struct TQ_Matrix *matrix,
@@ -76,7 +92,7 @@ void TQ_Matrix_SetElem(struct TQ_Matrix *matrix,
     }
 
     // Colocar un valor en la matriz.
-    matrix->h_mem[__TQ_Matrix_Pos(*matrix, indices, num_ind)] = value;
+    matrix->h_mem[__TQ_Matrix_IndexToPos(*matrix, indices, num_ind)] = value;
 }
 
 void __TQ_CPUMat_Add(struct TQ_Matrix one,

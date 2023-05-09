@@ -4,6 +4,21 @@
 #include "__tq_datatypes.h"
 #include "__tq_op_cpu.h"
 
+/**
+ * Matrix Index operations.
+ */
+
+unsigned long __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
+                                     unsigned int *indices,
+                                     unsigned int num_ind);
+void __TQ_Matrix_PosToIndex(struct TQ_Matrix matrix,
+                            unsigned int position,
+                            unsigned int *indices);
+
+/**
+ * Matrix Operation on CPU
+ */
+
 void __TQ_CPUMat_Add(struct TQ_Matrix one,
                      struct TQ_Matrix other,
                      struct TQ_Matrix *result);

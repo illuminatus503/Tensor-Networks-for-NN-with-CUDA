@@ -69,19 +69,25 @@ void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value)
 
 void TQ_Matrix_Eyes(struct TQ_Matrix *matrix)
 {
-    unsigned int i, dim_idx;
+    unsigned int i, j;
+    unsigned int indices[matrix->num_dims];
+
     for (i = 0; i < matrix->dims_prod; i++)
     {
-        for (dim_idx = 0; dim_idx < matrix->num_dims; dim_idx++)
+        __TQ_Matrix_PosToIndex(*matrix, i, indices);
+        j = 1;
+        while ((j < matrix->num_dims) && (indices[j] == indices[0]))
         {
-            if ((i + 1) % matrix->dimensions[dim_idx] == 0)
-            {
-                matrix->h_mem[i] = 1.0f;
-            }
-            else
-            {
-                matrix->h_mem[i] = 0.0f;
-            }
+            j++;
+        }
+
+        if (j == matrix->num_dims)
+        {
+            matrix->h_mem[i] = 1.0f;
+        }
+        else
+        {
+            matrix->h_mem[i] = 0.0f;
         }
     }
 }
