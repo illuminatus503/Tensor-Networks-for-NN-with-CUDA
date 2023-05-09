@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     unsigned int dims[NDIMS];
     // unsigned int coords[NDIMS];
 
-    TQ_Matrix A;
+    TQ_Matrix A, B, C;
 
     if (argc == 2)
     {
@@ -34,11 +34,18 @@ int main(int argc, char **argv)
     TQ_Matrix_Create(&A,
                      dims, NDIMS,
                      TQ_CPU_Matrix);
-    
+    TQ_Matrix_Create(&B,
+                     dims, NDIMS,
+                     TQ_CPU_Matrix);
+    TQ_Matrix_Create(&C,
+                     dims, NDIMS,
+                     TQ_CPU_Matrix);
+
     // TQ_Matrix_Init(&A, 6.998f);
     // TQ_Matrix_Ones(&A);
     // TQ_Matrix_Zeros(&A);
     TQ_Matrix_Eyes(&A);
+    TQ_Matrix_Eyes(&B);
 
     // Inicializamos las matrices a 1.0f (N x N)
     // for (i = 0; i < N; i++)
@@ -63,32 +70,21 @@ int main(int argc, char **argv)
     // }
 
     TQ_Matrix_Print(A);
-
+    TQ_Matrix_Print(B);
     // TQ_Matrix_Prod(A, B, &C);
 
-    // TQ_Matrix_Add(A, B, &C);
-    // TQ_Matrix_ProdNum(C, 2.0f, &C);
-
-    // Imprimir el resultado
-    // for (i = 0; i < N; i++)
-    // {
-    //     coords[0] = i;
-
-    //     for (j = 0; j < N; j++)
-    //     {
-    //         coords[1] = j;
-    //         printf("%.2f ", TQ_Matrix_GetElem(C, coords, NDIMS));
-    //     }
-    //     printf("\n");
-    // }
+    TQ_Matrix_Add(A, B, &C);
+    TQ_Matrix_Print(C);
+    TQ_Matrix_ProdNum(C, 2.0f, &C);
+    TQ_Matrix_Print(C);
 
     // int coords[] = {2, 1, 2};
     // printf("Posición (%d, %d, %d) = %lu en la matriz\n",
     //        coords[0], coords[1], coords[2], __TQ_Matrix_Pos(matrix, coords, 3));
 
     TQ_Matrix_Free(&A);
-    // TQ_Matrix_Free(&B);
-    // TQ_Matrix_Free(&C);
+    TQ_Matrix_Free(&B);
+    TQ_Matrix_Free(&C);
 
     return 0;
 }

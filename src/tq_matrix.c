@@ -39,23 +39,33 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
 
 void TQ_Matrix_Print(struct TQ_Matrix matrix)
 {
-    // TODO Print matrices > 2 dims.
-
     unsigned int i, dim_idx;
-    printf("[ ");
+    unsigned char enter_space;
+
+    enter_space = 1;
     for (i = 0; i < matrix.dims_prod; i++)
     {
+        // Initial space.
+        if (enter_space)
+        {
+            printf("[ ");
+        }
         printf("%1.3f ", matrix.h_mem[i]);
 
-        for (dim_idx = 0; dim_idx < matrix.num_dims; dim_idx++)
+        // Entering space.
+        enter_space = 0;
+        dim_idx = 0;
+        while ((dim_idx < matrix.num_dims) && !enter_space)
         {
-            if ((i + 1) % matrix.dimensions[dim_idx] == 0)
-            {
-                printf("]\n[ ");
-                break;
-            }
+            enter_space = ((i + 1) % matrix.dimensions[dim_idx] == 0);
+            dim_idx++;
+        }
+        if (enter_space)
+        {
+            printf("]\n");
         }
     }
+    printf("\n");
 }
 
 void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value)
