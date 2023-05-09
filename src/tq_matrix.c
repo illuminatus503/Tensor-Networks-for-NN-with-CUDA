@@ -34,7 +34,74 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
     matrix->dims_prod = total_size;
 
     // Reservamos la memoria para los datos de la matriz.
-    matrix->h_mem = (float *)malloc(total_size);
+    matrix->h_mem = (float *)malloc(matrix->length_bytes);
+}
+
+void TQ_Matrix_Print(struct TQ_Matrix matrix)
+{
+    // TODO Print matrices > 2 dims.
+
+    unsigned int i, dim_idx;
+    printf("[ ");
+    for (i = 0; i < matrix.dims_prod; i++)
+    {
+        printf("%1.3f ", matrix.h_mem[i]);
+
+        for (dim_idx = 0; dim_idx < matrix.num_dims; dim_idx++)
+        {
+            if ((i + 1) % matrix.dimensions[dim_idx] == 0)
+            {
+                printf("]\n[ ");
+                break;
+            }
+        }
+    }
+}
+
+void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value)
+{
+    unsigned int i;
+    for (i = 0; i < matrix->dims_prod; i++)
+    {
+        matrix->h_mem[i] = value;
+    }
+}
+
+void TQ_Matrix_Eyes(struct TQ_Matrix *matrix)
+{
+    unsigned int i, dim_idx;
+    for (i = 0; i < matrix->dims_prod; i++)
+    {
+        for (dim_idx = 0; dim_idx < matrix->num_dims; dim_idx++)
+        {
+            if ((i + 1) % matrix->dimensions[dim_idx] == 0)
+            {
+                matrix->h_mem[i] = 1.0f;
+            }
+            else
+            {
+                matrix->h_mem[i] = 0.0f;
+            }
+        }
+    }
+}
+
+void TQ_Matrix_Ones(struct TQ_Matrix *matrix)
+{
+    unsigned int i;
+    for (i = 0; i < matrix->dims_prod; i++)
+    {
+        matrix->h_mem[i] = 1.0f;
+    }
+}
+
+void TQ_Matrix_Zeros(struct TQ_Matrix *matrix)
+{
+    unsigned int i;
+    for (i = 0; i < matrix->dims_prod; i++)
+    {
+        matrix->h_mem[i] = 0.0f;
+    }
 }
 
 void TQ_Matrix_Free(struct TQ_Matrix *matrix)

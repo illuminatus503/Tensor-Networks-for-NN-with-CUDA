@@ -15,9 +15,16 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
 
 void TQ_Matrix_Free(struct TQ_Matrix *matrix);
 
+void TQ_Matrix_Print(struct TQ_Matrix matrix);
+
 /**
- * Matrix CONSTRUCTION/DESTRUCTION
+ * Matrix initialisation
  */
+
+void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value);
+void TQ_Matrix_Ones(struct TQ_Matrix *matrix);
+void TQ_Matrix_Zeros(struct TQ_Matrix *matrix);
+void TQ_Matrix_Eyes(struct TQ_Matrix *matrix);
 
 /**
  * Matrix OP.
@@ -38,9 +45,5 @@ void TQ_Matrix_ProdNum(struct TQ_Matrix one,
 void TQ_Matrix_Prod(struct TQ_Matrix one,
                     struct TQ_Matrix other,
                     struct TQ_Matrix *result);
-
-/**
- * Matrix OP.
- */
 
 #endif
