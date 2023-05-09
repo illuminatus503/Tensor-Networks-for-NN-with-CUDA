@@ -8,24 +8,32 @@
 int main(int argc, char **argv)
 {
     unsigned int i;
-    unsigned int N;
     unsigned int dims[NDIMS];
-    // unsigned int coords[NDIMS];
-
     TQ_Matrix A, B, C;
 
-    if (argc == 2)
+    if ((2 <= argc) || (argc < 4))
     {
-        N = atoi(argv[1]);
+        if (argc == 2)
+        {
+            for (i = 0; i < NDIMS; i++)
+            {
+                dims[i] = atoi(argv[1]);
+            }
+        }
+        else
+        {
+            for (i = 0; i < NDIMS; i++)
+            {
+                dims[i] = atoi(argv[1 + i]);
+            }
+        }
     }
     else
     {
-        N = 2;
-    }
-
-    for (i = 0; i < NDIMS; i++)
-    {
-        dims[i] = N;
+        for (i = 0; i < NDIMS; i++)
+        {
+            dims[i] = 2;
+        }
     }
 
     /**
