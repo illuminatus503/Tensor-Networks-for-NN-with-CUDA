@@ -71,6 +71,20 @@ __global__ void cuda_vec_dot_prod(float *A, float *B, float *C, int N)
     }
 }
 
+__global__ void cuda_matrix_prod(float *A, float *B, float *C, int N, int M)
+{
+    int row, col;
+    row = blockIdx.x * blockDim.x + threadIdx.x;
+    col = blockIdx.y * blockDim.y + threadIdx.y;
+
+    float tmp_sum = 0.0f;
+
+    if (row < N && col < M)
+    {
+
+    }
+}
+
 void __TQ_GPUMat_Add(struct TQ_Matrix one,
                      struct TQ_Matrix other,
                      struct TQ_Matrix *result)
@@ -342,4 +356,87 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
                       struct TQ_Matrix other,
                       struct TQ_Matrix *result)
 {
+    /**
+     * Time measurement, using CUDA events.
+     */
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    // Execution time, in ms.
+    float t_exe;
+
+    /**
+     * Device mem.
+     */
+    // Device memory for matrix ONE
+    float *d_one;
+
+    // Device memory for matrix OTHER
+    float *d_other;
+
+    // Device memory for matrix RESULT (the sum of both matrices)
+    float *d_result;
+
+    // Execution env.
+    int thread_per_block;
+    int block_in_grid;
+    long num_float = one.dims_prod;
+
+    /**
+     * Allocate device memory.
+     */
+    gpuErrchk(
+        cudaMalloc((void **)(&d_one), one.length_bytes));
+    gpuErrchk(
+        cudaMalloc((void **)(&d_other), other.length_bytes));
+    gpuErrchk(
+        cudaMalloc((void **)(&d_result), result->length_bytes));
+
+    /**
+     * Copy host mem. ONE, OTHER to device.
+     */
+    gpuErrchk(
+        cudaMemcpy((void *)(d_one), (const void *)(one.h_mem), one.length_bytes,
+                   cudaMemcpyHostToDevice));
+    gpuErrchk(
+        cudaMemcpy((void *)(d_other), (const void *)(other.h_mem), other.length_bytes,
+                   cudaMemcpyHostToDevice));
+
+    /**
+     * SET UP CUDA execution env.
+     *      thr_per_blk: number of CUDA threads per grid block
+     *      blk_in_grid: number of blocks in grid
+     */
+    thread_per_block = THR_PER_BLOCK;
+    block_in_grid = (int)ceil((float)num_float / thread_per_block);
+
+    // ! RUN - KERNEL
+    gpuErrchk(cudaEventRecord(start));
+    cuda_matrix_prod<<<block_in_grid, thread_per_block>>>(d_one, d_other, d_result, num_float);
+    gpuErrchk(cudaEventRecord(stop));
+    // ! END - KERNEL
+
+    /**
+     * Recover DATA from DEVICE
+     */
+    gpuErrchk(
+        cudaMemcpy((void *)(result->h_mem), (const void *)(d_result), result->length_bytes,
+                   cudaMemcpyDeviceToHost));
+
+    /**
+     * Work out elapsed time and finish operation.
+     */
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&t_exe, start, stop);
+
+    /**
+     * CLEAN DEVICE mem.
+     */
+    cudaFree(d_one);
+    cudaFree(d_other);
+    cudaFree(d_result);
+
+    printf("Matrix SUB: %ld float(s) -- Elapsed time: %1.3fms\n",
+           num_float, t_exe);
 }

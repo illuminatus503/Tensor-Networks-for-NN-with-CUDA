@@ -274,6 +274,6 @@ void TQ_Matrix_Prod(struct TQ_Matrix one,
     }
     else
     {
-        // TODO
+        __TQ_GPUMat_Prod(one, other, result);
     }
 }
