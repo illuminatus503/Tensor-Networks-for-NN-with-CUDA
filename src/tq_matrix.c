@@ -211,7 +211,7 @@ void TQ_Matrix_Add(struct TQ_Matrix one,
     }
     else
     {
-        // TODO
+        __TQ_GPUMat_Add(one, other, result);
     }
 }
 
@@ -226,7 +226,7 @@ void TQ_Matrix_Sub(struct TQ_Matrix one,
     }
     else
     {
-        // TODO
+        __TQ_GPUMat_Sub(one, other, result);
     }
 }
 
@@ -234,7 +234,14 @@ void TQ_Matrix_ProdNum(struct TQ_Matrix one,
                        float factor,
                        struct TQ_Matrix *result)
 {
-    __TQ_CPUMat_ProdNum(one, factor, result); // Por defecto, será más rápido.
+    if (one.type == TQ_GPU_Matrix)
+    {
+        __TQ_GPUMat_ProdNum(one, factor, result);
+    }
+    else
+    {
+        __TQ_CPUMat_ProdNum(one, factor, result); // Por defecto, será más rápido.
+    }
 }
 
 void TQ_Matrix_Prod(struct TQ_Matrix one,
@@ -270,7 +277,3 @@ void TQ_Matrix_Prod(struct TQ_Matrix one,
         // TODO
     }
 }
-
-/**
- * FIN -- OPERACIONES CON MATRICES
- */

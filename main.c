@@ -41,13 +41,13 @@ int main(int argc, char **argv)
      */
     TQ_Matrix_Create(&A,
                      dims, NDIMS,
-                     TQ_CPU_Matrix);
+                     TQ_GPU_Matrix);
     TQ_Matrix_Create(&B,
                      dims, NDIMS,
-                     TQ_CPU_Matrix);
+                     TQ_GPU_Matrix);
     TQ_Matrix_Create(&C,
                      dims, NDIMS,
-                     TQ_CPU_Matrix);
+                     TQ_GPU_Matrix);
 
     // TQ_Matrix_Init(&A, 6.998f);
     // TQ_Matrix_Ones(&A);
@@ -77,7 +77,9 @@ int main(int argc, char **argv)
     //     }
     // }
 
+    printf("A = \n");
     TQ_Matrix_Print(A);
+    printf("B = \n");
     TQ_Matrix_Print(B);
     // TQ_Matrix_Prod(A, B, &C);
 

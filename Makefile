@@ -1,9 +1,9 @@
 # CUDA directory:
-CUDA_ROOT_DIR=/usr/local/cuda
+CUDA_ROOT_DIR=/usr
 
 # CC compiler options:
 CC=g++
-CC_FLAGS= -g -Wall -O3
+CC_FLAGS= -Wall -O3
 CC_LIBS=
 
 # NVCC compiler options:
@@ -35,7 +35,7 @@ INC_DIR = include
 BIN = test
 
 #! Object files: (!!Añadir aquí cada nuevo fichero fuente!!)
-OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/tq_matrix.o $(OBJ_DIR)/__tq_op_cpu.o
+OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/tq_matrix.o $(OBJ_DIR)/__tq_op_cpu.o $(OBJ_DIR)/__tq_op_gpu.o
 
 ## Compile ##
 # Link c and CUDA compiled object files to target executable:

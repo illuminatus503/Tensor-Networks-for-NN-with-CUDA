@@ -3,6 +3,7 @@
 
 #include "__tq_datatypes.h"
 #include "__tq_op_cpu.h"
+#include "__tq_op_gpu.cuh"
 
 /**
  * Matrix CONSTRUCTION/DESTRUCTION

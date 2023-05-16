@@ -2,7 +2,6 @@
 #define CPU_TQMAT_H_
 
 #include "__tq_datatypes.h"
-#include "__tq_op_cpu.h"
 
 /**
  * Matrix Index operations.
