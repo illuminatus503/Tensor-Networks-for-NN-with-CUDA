@@ -362,3 +362,42 @@ void TQ_Vec_Dot(struct TQ_Matrix one,
         __TQ_GPUVec_Dot(one, other, result);
     }
 }
+
+void TQ_Matrix_T(struct TQ_Matrix input,
+                 struct TQ_Matrix *output)
+{
+    if (input.num_dims != 2)
+    {
+        fprintf(stderr,
+                "<TQ TQ_matrix_T> Num dims %d != 2\n",
+                input.num_dims);
+        exit(1);
+    }
+
+    unsigned int i, j;
+    unsigned int dims[2] = {input.dimensions[1], input.dimensions[0]};
+
+    // TODO Traspuesta en GPU
+    // Traspuesta en CPU (localidad)
+    TQ_Matrix_Create(output, dims, 2, input.type);
+    for (j = 0; j < input.dimensions[0]; j++)
+    {
+        for (i = 0; i < input.dimensions[1]; i++)
+        {
+            output->h_mem[i * dims[0] + j] = input.h_mem[j * dims[0] + i];
+        }
+    }
+}
+
+void TQ_Matrix_Apply(struct TQ_Matrix input,
+                     float (*function)(float),
+                     struct TQ_Matrix *output)
+{
+    unsigned int i;
+    TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
+
+    for (i = 0; i < input.dims_prod; i++)
+    {
+        output->h_mem[i] = function(input.h_mem[i]);
+    }
+}

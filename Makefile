@@ -35,7 +35,7 @@ INC_DIR = include
 BIN = test
 
 #! Object files: (!!Añadir aquí cada nuevo fichero fuente!!)
-OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/tq_matrix.o $(OBJ_DIR)/__tq_op_cpu.o $(OBJ_DIR)/__tq_op_gpu.o
+OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/tq_matrix.o $(OBJ_DIR)/__tq_op_cpu.o $(OBJ_DIR)/__tq_op_gpu.o $(OBJ_DIR)/tq_perceptron.o
 
 ## Compile ##
 # Link c and CUDA compiled object files to target executable:

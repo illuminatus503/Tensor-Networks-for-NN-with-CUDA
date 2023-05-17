@@ -2,101 +2,54 @@
 #include <stdlib.h>
 
 #include "include/tq_matrix.h"
+#include "include/tq_perceptron.h"
 
 void init_args(int argc, char **argv,
-               unsigned int *ndims,
-               unsigned int **dims)
+               unsigned int *n_elems)
 {
-    unsigned int i;
     if (argc >= 2)
     {
-        (*ndims) = atoi(argv[1]);
+        (*n_elems) = atoi(argv[1]);
     }
     else
     {
-        (*ndims) = 1;
-    }
-
-    *dims = (unsigned int *)malloc(sizeof(int) * (*ndims));
-
-    if (argc >= 3)
-    {
-        if (argc == 3)
-        {
-            for (i = 0; i < (*ndims); i++)
-            {
-                (*dims)[i] = atoi(argv[2]);
-            }
-        }
-        else
-        {
-            for (i = 0; i < (*ndims); i++)
-            {
-                (*dims)[i] = atoi(argv[2 + i]);
-            }
-        }
-    }
-    else
-    {
-        for (i = 0; i < (*ndims); i++)
-        {
-            (*dims)[i] = 1;
-        }
+        (*n_elems) = 1;
     }
 }
 
 int main(int argc, char **argv)
 {
-    unsigned int NDIMS;
-    unsigned int *dims;
-    TQ_Matrix A, B, C;
-    float c_value;
+    unsigned int num_elems;
+    unsigned int dims[2];
+
+    TQ_Perceptron P;
+    TQ_Matrix X, A;
+
+    init_args(argc, argv, &num_elems);
+
+    // Input matrix: random data.
+    dims[0] = num_elems;
+    dims[1] = 1;
+    TQ_Matrix_Create(&X,
+                     dims, 2,
+                     TQ_GPU_Matrix);
+    TQ_Matrix_Unif(&X);
+
+    printf("X = \n");
+    TQ_Matrix_Print(X);
 
     /**
-     * Crea las matrices
+     * Perceptron create & launch
      */
-    init_args(argc, argv, &NDIMS, &dims);
-    TQ_Matrix_Create(&A,
-                     dims, NDIMS,
-                     TQ_CPU_Matrix);
-    TQ_Matrix_Create(&B,
-                     dims, NDIMS,
-                     TQ_GPU_Matrix);
-    // TQ_Matrix_Create(&C,
-    //                  dims, NDIMS,
-    //                  TQ_GPU_Matrix);
-
-    // TQ_Matrix_Init(&A, 6.998f);
-    // TQ_Matrix_Ones(&A);
-    // TQ_Matrix_Zeros(&A);
-    // TQ_Matrix_Eyes(&A);
-    // TQ_Matrix_Eyes(&B);
-
-    TQ_Matrix_Unif(&A);
-    TQ_Matrix_Rand(&B, -10.0, 10.0);
-
-    printf("A = \n");
+    printf("Creating perceptron...\n");
+    TQ_Perceptron_Create(&P, num_elems, TQ_GPU_Matrix);
+    printf("Pass forward\n");
+    TQ_Perceptron_Forward(X, P, &A);
+    printf("Activation = \n");
     TQ_Matrix_Print(A);
-    printf("B = \n");
-    TQ_Matrix_Print(B);
-    TQ_Vec_Dot(A, B, &c_value);
-    printf("A dot B = %1.3f\n", c_value);
 
-    // TQ_Matrix_Add(A, B, &C);
-    // TQ_Matrix_Print(C);
-    // TQ_Matrix_ProdNum(C, 2.0f, &C);
-    // TQ_Matrix_Print(C);
-    // TQ_Matrix_Prod(C, C, &C);
-    // TQ_Matrix_Print(C);
-
-    // int coords[] = {2, 1, 2};
-    // printf("Posición (%d, %d, %d) = %lu en la matriz\n",
-    //        coords[0], coords[1], coords[2], __TQ_Matrix_Pos(matrix, coords, 3));
-
+    TQ_Matrix_Free(&X);
     TQ_Matrix_Free(&A);
-    TQ_Matrix_Free(&B);
-    // TQ_Matrix_Free(&C);
 
-    free(dims);
     return 0;
 }

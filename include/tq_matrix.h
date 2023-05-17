@@ -58,4 +58,11 @@ void TQ_Matrix_Prod(struct TQ_Matrix one,
                     struct TQ_Matrix other,
                     struct TQ_Matrix *result);
 
+void TQ_Matrix_T(struct TQ_Matrix input,
+                 struct TQ_Matrix *output);
+
+void TQ_Matrix_Apply(struct TQ_Matrix input,
+                     float (*function)(float),
+                     struct TQ_Matrix *output);
+
 #endif
