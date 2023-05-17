@@ -47,4 +47,8 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
                       struct TQ_Matrix other,
                       struct TQ_Matrix *result);
 
+void __TQ_GPUVec_Dot(struct TQ_Matrix one,
+                     struct TQ_Matrix other,
+                     float *result);
+
 #endif

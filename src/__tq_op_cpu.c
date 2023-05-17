@@ -163,3 +163,16 @@ void __TQ_CPUMat_Prod(struct TQ_Matrix one,
         }
     }
 }
+
+void __TQ_CPUVec_Dot(struct TQ_Matrix one,
+                     struct TQ_Matrix other,
+                     float *result)
+{
+    unsigned int i;
+    result[0] = 0.0f;
+
+    for (i = 0; i < one.dims_prod; i++) // Una dimensión = longitud
+    {
+        result[0] += (one.h_mem[i] * other.h_mem[i]);
+    }
+}

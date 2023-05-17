@@ -32,6 +32,13 @@ void TQ_Matrix_Unif(struct TQ_Matrix *matrix);
 void TQ_Matrix_Rand(struct TQ_Matrix *matrix, float min, float max);
 
 /**
+ * Vector OP.
+ */
+void TQ_Vec_Dot(struct TQ_Matrix one,
+                struct TQ_Matrix other,
+                float *result);
+
+/**
  * Matrix OP.
  */
 

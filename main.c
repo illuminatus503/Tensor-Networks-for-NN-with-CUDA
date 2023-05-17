@@ -3,55 +3,65 @@
 
 #include "include/tq_matrix.h"
 
-int main(int argc, char **argv)
+void init_args(int argc, char **argv,
+               unsigned int *ndims,
+               unsigned int **dims)
 {
     unsigned int i;
+    if (argc >= 2)
+    {
+        (*ndims) = atoi(argv[1]);
+    }
+    else
+    {
+        (*ndims) = 1;
+    }
 
-    unsigned int NDIMS;
-    unsigned int *dims;
-
-    TQ_Matrix A, B, C;
+    *dims = (unsigned int *)malloc(sizeof(int) * (*ndims));
 
     if (argc >= 3)
     {
-        NDIMS = atoi(argv[1]);
-        dims = (unsigned int *)malloc(sizeof(int) * NDIMS);
-
         if (argc == 3)
         {
-            for (i = 0; i < NDIMS; i++)
+            for (i = 0; i < (*ndims); i++)
             {
-                dims[i] = atoi(argv[2]);
+                (*dims)[i] = atoi(argv[2]);
             }
         }
         else
         {
-            for (i = 0; i < NDIMS; i++)
+            for (i = 0; i < (*ndims); i++)
             {
-                dims[i] = atoi(argv[2 + i]);
+                (*dims)[i] = atoi(argv[2 + i]);
             }
         }
     }
     else
     {
-        NDIMS = 2;
-        dims = (unsigned int *)malloc(sizeof(int) * NDIMS);
-
-        for (i = 0; i < NDIMS; i++)
+        for (i = 0; i < (*ndims); i++)
         {
-            dims[i] = 2;
+            (*dims)[i] = 1;
         }
     }
+}
+
+int main(int argc, char **argv)
+{
+    unsigned int NDIMS;
+    unsigned int *dims;
+    TQ_Matrix A, B, C;
+    float c_value;
 
     /**
      * Crea las matrices
      */
+    init_args(argc, argv, &NDIMS, &dims);
     TQ_Matrix_Create(&A,
                      dims, NDIMS,
+                     TQ_CPU_Matrix);
+    TQ_Matrix_Create(&B,
+                     dims, NDIMS,
                      TQ_GPU_Matrix);
-    // TQ_Matrix_Create(&B,
-    //                  dims, NDIMS,
-    //                  TQ_GPU_Matrix);
     // TQ_Matrix_Create(&C,
     //                  dims, NDIMS,
     //                  TQ_GPU_Matrix);
@@ -63,35 +73,14 @@ int main(int argc, char **argv)
     // TQ_Matrix_Eyes(&B);
 
     TQ_Matrix_Unif(&A);
-    // TQ_Matrix_Rand(&B, -10.0, 10.0);
-
-    // Inicializamos las matrices a 1.0f (N x N)
-    // for (i = 0; i < N; i++)
-    // {
-    //     coords[0] = i;
-
-    //     for (j = 0; j < N; j++)
-    //     {
-    //         coords[1] = j;
-
-    //         if (i == j)
-    //         {
-    //             TQ_Matrix_SetElem(&A, 1.0f, coords, NDIMS);
-    //             TQ_Matrix_SetElem(&B, 0.10f, coords, NDIMS);
-    //         }
-    //         else
-    //         {
-    //             TQ_Matrix_SetElem(&A, 0.0f, coords, NDIMS);
-    //             TQ_Matrix_SetElem(&B, 0.0f, coords, NDIMS);
-    //         }
-    //     }
-    // }
+    TQ_Matrix_Rand(&B, -10.0, 10.0);
 
     printf("A = \n");
     TQ_Matrix_Print(A);
-    // printf("B = \n");
-    // TQ_Matrix_Print(B);
-    // TQ_Matrix_Prod(A, B, &C);
+    printf("B = \n");
+    TQ_Matrix_Print(B);
+    TQ_Vec_Dot(A, B, &c_value);
+    printf("A dot B = %1.3f\n", c_value);
 
     // TQ_Matrix_Add(A, B, &C);
     // TQ_Matrix_Print(C);
@@ -105,7 +94,7 @@ int main(int argc, char **argv)
     //        coords[0], coords[1], coords[2], __TQ_Matrix_Pos(matrix, coords, 3));
 
     TQ_Matrix_Free(&A);
-    // TQ_Matrix_Free(&B);
+    TQ_Matrix_Free(&B);
     // TQ_Matrix_Free(&C);
 
     free(dims);
