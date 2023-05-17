@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
     // Input matrix: random data.
     dims[0] = num_elems;
-    dims[1] = 1;
+    dims[1] = num_elems;
     TQ_Matrix_Create(&X,
                      dims, 2,
                      TQ_GPU_Matrix);

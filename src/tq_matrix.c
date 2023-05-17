@@ -38,6 +38,55 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
     matrix->h_mem = (float *)malloc(matrix->length_bytes);
 }
 
+void TQ_Matrix_Clone(struct TQ_Matrix input,
+                     struct TQ_Matrix *output)
+{
+    unsigned int i;
+
+    TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
+    for (i = 0; i < input.dims_prod; i++)
+    {
+        output->h_mem[i] = input.h_mem[i];
+    }
+}
+
+void TQ_Matrix_Extend(struct TQ_Matrix input,
+                      struct TQ_Matrix *output,
+                      unsigned int *new_dims,
+                      unsigned int num_dims,
+                      float fill_val)
+{
+    unsigned long i;
+
+    unsigned long new_dims_prod = 1;
+    for (i = 0; i < num_dims; i++)
+    {
+        new_dims_prod *= new_dims[i];
+    }
+
+    if (new_dims_prod < input.dims_prod)
+    {
+        fprintf(stderr,
+                "<TQ Matrix Reshape> Unable to reshape matrix: %lu != %lu\n",
+                input.dims_prod, new_dims_prod);
+        exit(1);
+    }
+
+    TQ_Matrix_Create(output, new_dims, num_dims, input.type);
+
+    for (i = 0; i < new_dims_prod; i++)
+    {
+        if (__TQ_Matrix_Pos_Is_Valid(input, i))
+        {
+            output->h_mem[i] = input.h_mem[i];
+        }
+        else
+        {
+            output->h_mem[i] = fill_val;
+        }
+    }
+}
+
 void __TQ_Matrix_Print(float *tensor,
                        unsigned int *dims,
                        unsigned int ndims,

@@ -56,10 +56,16 @@ void TQ_Perceptron_Forward(struct TQ_Matrix X,
 {
     struct TQ_Matrix Z, X_ext;
 
+    // Extiende la entrada por 1 en la dimensión 0 (filas)
+    unsigned int ext_dims[2] = {X.dimensions[0] + 1, X.dimensions[1]};
+    TQ_Matrix_Extend(X, &X_ext, ext_dims, 2, 1.0f);
+
     // Transference function (neuron.weights_vector = W_T, by def.)
-    TQ_Matrix_Prod(neuron.weights_vector, X, &Z);
+    TQ_Matrix_Prod(neuron.weights_vector, X_ext, &Z);
 
     // Activation
     TQ_Matrix_Apply(Z, neuron.activ.activation, A);
+    
     TQ_Matrix_Free(&Z);
+    TQ_Matrix_Free(&X_ext);
 }

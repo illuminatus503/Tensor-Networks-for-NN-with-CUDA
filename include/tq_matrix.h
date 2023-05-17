@@ -14,6 +14,15 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
                       unsigned int num_dims,
                       TQ_Matrix_t type);
 
+void TQ_Matrix_Clone(struct TQ_Matrix input,
+                     struct TQ_Matrix *output);
+
+void TQ_Matrix_Extend(struct TQ_Matrix input,
+                      struct TQ_Matrix *output,
+                      unsigned int *new_dims,
+                      unsigned int num_dims,
+                      float fill_val);
+
 void TQ_Matrix_Free(struct TQ_Matrix *matrix);
 
 void TQ_Matrix_Print(struct TQ_Matrix matrix);

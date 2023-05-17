@@ -13,6 +13,9 @@ unsigned long __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
 void __TQ_Matrix_PosToIndex(struct TQ_Matrix matrix,
                             unsigned int position,
                             unsigned int *indices);
+                            
+unsigned char __TQ_Matrix_Pos_Is_Valid(struct TQ_Matrix matrix,
+                                       unsigned long pos);
 
 float TQ_Matrix_GetElem(struct TQ_Matrix matrix,
                         unsigned int *indices,

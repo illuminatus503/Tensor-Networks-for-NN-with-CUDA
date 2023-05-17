@@ -35,6 +35,26 @@ void __TQ_Matrix_PosToIndex(struct TQ_Matrix matrix,
     indices[matrix.num_dims - 1] = pos;
 }
 
+unsigned char __TQ_Matrix_Pos_Is_Valid(struct TQ_Matrix matrix,
+                                       unsigned long pos)
+{
+    unsigned char is_valid;
+    unsigned int i;
+    unsigned int indices[matrix.num_dims];
+    __TQ_Matrix_PosToIndex(matrix, pos, indices);
+
+    // La posición dada está dentro del rango de la matriz?
+    is_valid = 1;
+
+    i = 0;
+    while ((i < matrix.num_dims) && is_valid)
+    {
+        is_valid = (indices[i] >= 0 && indices[i] < matrix.dimensions[i]);
+        i++;
+    }
+    return is_valid;
+}
+
 float TQ_Matrix_GetElem(struct TQ_Matrix matrix,
                         unsigned int *indices,
                         unsigned int num_ind)
