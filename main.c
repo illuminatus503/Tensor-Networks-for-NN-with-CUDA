@@ -3,7 +3,7 @@
 
 #include "include/tq_matrix.h"
 
-#define NDIMS 2
+#define NDIMS 3
 
 int main(int argc, char **argv)
 {
@@ -42,12 +42,12 @@ int main(int argc, char **argv)
     TQ_Matrix_Create(&A,
                      dims, NDIMS,
                      TQ_GPU_Matrix);
-    TQ_Matrix_Create(&B,
-                     dims, NDIMS,
-                     TQ_GPU_Matrix);
-    TQ_Matrix_Create(&C,
-                     dims, NDIMS,
-                     TQ_GPU_Matrix);
+    // TQ_Matrix_Create(&B,
+    //                  dims, NDIMS,
+    //                  TQ_GPU_Matrix);
+    // TQ_Matrix_Create(&C,
+    //                  dims, NDIMS,
+    //                  TQ_GPU_Matrix);
 
     // TQ_Matrix_Init(&A, 6.998f);
     // TQ_Matrix_Ones(&A);
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     // TQ_Matrix_Eyes(&B);
 
     TQ_Matrix_Unif(&A);
-    TQ_Matrix_Rand(&B, -10.0, 10.0);
+    // TQ_Matrix_Rand(&B, -10.0, 10.0);
 
     // Inicializamos las matrices a 1.0f (N x N)
     // for (i = 0; i < N; i++)
@@ -82,24 +82,24 @@ int main(int argc, char **argv)
 
     printf("A = \n");
     TQ_Matrix_Print(A);
-    printf("B = \n");
-    TQ_Matrix_Print(B);
+    // printf("B = \n");
+    // TQ_Matrix_Print(B);
     // TQ_Matrix_Prod(A, B, &C);
 
-    TQ_Matrix_Add(A, B, &C);
-    TQ_Matrix_Print(C);
-    TQ_Matrix_ProdNum(C, 2.0f, &C);
-    TQ_Matrix_Print(C);
-    TQ_Matrix_Prod(C, C, &C);
-    TQ_Matrix_Print(C);
+    // TQ_Matrix_Add(A, B, &C);
+    // TQ_Matrix_Print(C);
+    // TQ_Matrix_ProdNum(C, 2.0f, &C);
+    // TQ_Matrix_Print(C);
+    // TQ_Matrix_Prod(C, C, &C);
+    // TQ_Matrix_Print(C);
 
     // int coords[] = {2, 1, 2};
     // printf("Posición (%d, %d, %d) = %lu en la matriz\n",
     //        coords[0], coords[1], coords[2], __TQ_Matrix_Pos(matrix, coords, 3));
 
     TQ_Matrix_Free(&A);
-    TQ_Matrix_Free(&B);
-    TQ_Matrix_Free(&C);
+    // TQ_Matrix_Free(&B);
+    // TQ_Matrix_Free(&C);
 
     return 0;
 }

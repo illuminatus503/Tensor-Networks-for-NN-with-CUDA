@@ -38,35 +38,36 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
     matrix->h_mem = (float *)malloc(matrix->length_bytes);
 }
 
+void __TQ_Matrix_Print(float *tensor,
+                       unsigned int *dims,
+                       unsigned int ndims,
+                       unsigned int depth)
+{
+    unsigned int i;
+    if (depth == ndims - 1)
+    {
+        for (i = 0; i < dims[depth]; i++)
+        {
+            printf("%1.2f ", *tensor);
+            tensor++;
+        }
+        printf("\n");
+    }
+    else
+    {
+        for (i = 0; i < dims[depth]; i++)
+        {
+            __TQ_Matrix_Print(tensor, dims, ndims, depth + 1);
+            tensor += dims[depth + 1];
+        }
+        printf("\n");
+    }
+}
+
 void TQ_Matrix_Print(struct TQ_Matrix matrix)
 {
-    unsigned int i, dim_idx;
-    unsigned char enter_space;
-
-    enter_space = 1;
-    for (i = 0; i < matrix.dims_prod; i++)
-    {
-        // Initial space.
-        if (enter_space)
-        {
-            printf("[ ");
-        }
-        printf("%1.3f ", matrix.h_mem[i]);
-
-        // Entering space.
-        enter_space = 0;
-        dim_idx = 0;
-        while ((dim_idx < matrix.num_dims) && !enter_space)
-        {
-            enter_space = ((i + 1) % matrix.dimensions[dim_idx] == 0);
-            dim_idx++;
-        }
-        if (enter_space)
-        {
-            printf("]\n");
-        }
-    }
-    printf("\n");
+    __TQ_Matrix_Print((float *)matrix.h_mem,
+                      matrix.dimensions, matrix.num_dims, 0);
 }
 
 void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value)
