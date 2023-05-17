@@ -43,24 +43,41 @@ void __TQ_Matrix_Print(float *tensor,
                        unsigned int ndims,
                        unsigned int depth)
 {
-    unsigned int i;
+    unsigned int i, j;
+    
     if (depth == ndims - 1)
     {
+        printf("[");
         for (i = 0; i < dims[depth]; i++)
         {
-            printf("%1.2f ", *tensor);
+            printf("%1.3f ", *tensor);
+            if (i < dims[depth] - 1)
+            {
+                printf(", ");
+            }
+
             tensor++;
         }
-        printf("\n");
+        printf("]");
     }
     else
     {
+        printf("[");
         for (i = 0; i < dims[depth]; i++)
         {
             __TQ_Matrix_Print(tensor, dims, ndims, depth + 1);
+            if (i < dims[depth] - 1)
+            {
+                printf(",\n");
+                for (j = 0; j <= depth; j++)
+                {
+                    printf(" ");
+                }
+            }
+
             tensor += dims[depth + 1];
         }
-        printf("\n");
+        printf("]\n");
     }
 }
 

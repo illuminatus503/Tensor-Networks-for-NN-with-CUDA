@@ -3,33 +3,40 @@
 
 #include "include/tq_matrix.h"
 
-#define NDIMS 3
-
 int main(int argc, char **argv)
 {
     unsigned int i;
-    unsigned int dims[NDIMS];
+
+    unsigned int NDIMS;
+    unsigned int *dims;
+
     TQ_Matrix A, B, C;
 
-    if ((2 <= argc) || (argc < 4))
+    if (argc >= 3)
     {
-        if (argc == 2)
+        NDIMS = atoi(argv[1]);
+        dims = (unsigned int *)malloc(sizeof(int) * NDIMS);
+
+        if (argc == 3)
         {
             for (i = 0; i < NDIMS; i++)
             {
-                dims[i] = atoi(argv[1]);
+                dims[i] = atoi(argv[2]);
             }
         }
         else
         {
             for (i = 0; i < NDIMS; i++)
             {
-                dims[i] = atoi(argv[1 + i]);
+                dims[i] = atoi(argv[2 + i]);
             }
         }
     }
     else
     {
+        NDIMS = 2;
+        dims = (unsigned int *)malloc(sizeof(int) * NDIMS);
+
         for (i = 0; i < NDIMS; i++)
         {
             dims[i] = 2;
@@ -101,5 +108,6 @@ int main(int argc, char **argv)
     // TQ_Matrix_Free(&B);
     // TQ_Matrix_Free(&C);
 
+    free(dims);
     return 0;
 }
