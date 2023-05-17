@@ -87,6 +87,8 @@ int main(int argc, char **argv)
     TQ_Matrix_Print(C);
     TQ_Matrix_ProdNum(C, 2.0f, &C);
     TQ_Matrix_Print(C);
+    TQ_Matrix_Prod(C, C, &C);
+    TQ_Matrix_Print(C);
 
     // int coords[] = {2, 1, 2};
     // printf("Posición (%d, %d, %d) = %lu en la matriz\n",

@@ -73,15 +73,21 @@ __global__ void cuda_vec_dot_prod(float *A, float *B, float *C, int N)
 
 __global__ void cuda_matrix_prod(float *A, float *B, float *C, int N, int M)
 {
+    int i;
     int row, col;
-    row = blockIdx.x * blockDim.x + threadIdx.x;
-    col = blockIdx.y * blockDim.y + threadIdx.y;
+    col = blockIdx.x * blockDim.x + threadIdx.x;
+    row = blockIdx.y * blockDim.y + threadIdx.y;
 
     float tmp_sum = 0.0f;
 
     if (row < N && col < M)
     {
+        for (i = 0; i < M; i++)
+        {
+            tmp_sum += A[row * N + i] * B[i * M + col];
+        }
 
+        C[row * N + col] = tmp_sum;
     }
 }
 
@@ -379,9 +385,10 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
     float *d_result;
 
     // Execution env.
-    int thread_per_block;
-    int block_in_grid;
-    long num_float = one.dims_prod;
+    dim3 thread_per_block;
+    dim3 blocks_per_grid;
+
+    long num_float = result->dims_prod;
 
     /**
      * Allocate device memory.
@@ -405,15 +412,28 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
 
     /**
      * SET UP CUDA execution env.
-     *      thr_per_blk: number of CUDA threads per grid block
-     *      blk_in_grid: number of blocks in grid
+     *      thread_per_block: number of CUDA threads per grid block
+     *      blocks_per_grid: number of blocks in grid
      */
-    thread_per_block = THR_PER_BLOCK;
-    block_in_grid = (int)ceil((float)num_float / thread_per_block);
+
+    if (result->dims_prod > 512)
+    {
+        thread_per_block.x = 512;
+        thread_per_block.y = 512;
+        blocks_per_grid.x = ceil((float)result->dimensions[0] / (float)thread_per_block.x);
+        blocks_per_grid.y = ceil((float)result->dimensions[1] / (float)thread_per_block.y);
+    }
+    else
+    {
+        thread_per_block.x = result->dimensions[0];
+        thread_per_block.y = result->dimensions[1];
+        blocks_per_grid.x = 1;
+        blocks_per_grid.y = 1;
+    }
 
     // ! RUN - KERNEL
     gpuErrchk(cudaEventRecord(start));
-    cuda_matrix_prod<<<block_in_grid, thread_per_block>>>(d_one, d_other, d_result, num_float);
+    cuda_matrix_prod<<<blocks_per_grid, thread_per_block>>>(d_one, d_other, d_result, result->dimensions[0], result->dimensions[1]);
     gpuErrchk(cudaEventRecord(stop));
     // ! END - KERNEL
 
@@ -437,6 +457,6 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
     cudaFree(d_other);
     cudaFree(d_result);
 
-    printf("Matrix SUB: %ld float(s) -- Elapsed time: %1.3fms\n",
+    printf("Matrix MATRIX PROD: %ld float(s) -- Elapsed time: %1.3fms\n",
            num_float, t_exe);
 }
