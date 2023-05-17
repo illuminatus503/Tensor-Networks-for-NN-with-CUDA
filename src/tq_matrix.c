@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "../include/tq_matrix.h"
 
@@ -120,15 +121,37 @@ void TQ_Matrix_Zeros(struct TQ_Matrix *matrix)
     }
 }
 
+void TQ_Matrix_Rand(struct TQ_Matrix *matrix, float min, float max)
+{
+    unsigned int i;
+    srand(time(NULL));
+
+    float rand_val;
+    float range = max - min;
+
+    for (i = 0; i < matrix->dims_prod; i++)
+    {
+        rand_val = (float)rand() / (float)RAND_MAX;
+        matrix->h_mem[i] = rand_val * range + min;
+    }
+}
+
+void TQ_Matrix_Unif(struct TQ_Matrix *matrix)
+{
+    unsigned int i;
+    srand(time(NULL));
+
+    for (i = 0; i < matrix->dims_prod; i++)
+    {
+        matrix->h_mem[i] = (float)rand() / (float)RAND_MAX;
+    }
+}
+
 void TQ_Matrix_Free(struct TQ_Matrix *matrix)
 {
     free(matrix->h_mem);
     free(matrix->dimensions);
 }
-
-/**
- * FIN -- LA CREACIÓN & DESTRUCCIÓN
- */
 
 /**
  * OPERACIONES CON MATRICES

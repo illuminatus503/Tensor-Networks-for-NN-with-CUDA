@@ -416,10 +416,10 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
      *      blocks_per_grid: number of blocks in grid
      */
 
-    if (result->dims_prod > 512)
+    if (result->dims_prod > THR_PER_BLOCK)
     {
-        thread_per_block.x = 512;
-        thread_per_block.y = 512;
+        thread_per_block.x = THR_PER_BLOCK;
+        thread_per_block.y = THR_PER_BLOCK;
         blocks_per_grid.x = ceil((float)result->dimensions[0] / (float)thread_per_block.x);
         blocks_per_grid.y = ceil((float)result->dimensions[1] / (float)thread_per_block.y);
     }

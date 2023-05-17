@@ -23,9 +23,13 @@ void TQ_Matrix_Print(struct TQ_Matrix matrix);
  */
 
 void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value);
+
 void TQ_Matrix_Ones(struct TQ_Matrix *matrix);
 void TQ_Matrix_Zeros(struct TQ_Matrix *matrix);
 void TQ_Matrix_Eyes(struct TQ_Matrix *matrix);
+
+void TQ_Matrix_Unif(struct TQ_Matrix *matrix);
+void TQ_Matrix_Rand(struct TQ_Matrix *matrix, float min, float max);
 
 /**
  * Matrix OP.

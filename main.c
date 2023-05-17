@@ -52,8 +52,11 @@ int main(int argc, char **argv)
     // TQ_Matrix_Init(&A, 6.998f);
     // TQ_Matrix_Ones(&A);
     // TQ_Matrix_Zeros(&A);
-    TQ_Matrix_Eyes(&A);
-    TQ_Matrix_Eyes(&B);
+    // TQ_Matrix_Eyes(&A);
+    // TQ_Matrix_Eyes(&B);
+
+    TQ_Matrix_Unif(&A);
+    TQ_Matrix_Rand(&B, -10.0, 10.0);
 
     // Inicializamos las matrices a 1.0f (N x N)
     // for (i = 0; i < N; i++)
