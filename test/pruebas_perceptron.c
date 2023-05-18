@@ -4,8 +4,6 @@
 #include "include/tq_matrix.h"
 #include "include/tq_perceptron.h"
 
-#define EPOCHS 10
-
 void init_args(int argc, char **argv,
                unsigned int *n_elems)
 {
@@ -24,8 +22,6 @@ void init_args(int argc, char **argv,
 
 int main(int argc, char **argv)
 {
-    unsigned int epoch;
-
     unsigned int input_dims[2];
     unsigned int dims[2];
 
@@ -62,22 +58,14 @@ int main(int argc, char **argv)
      */
     printf("Creating perceptron...\n");
     TQ_Perceptron_Create(&P, input_dims[1], TQ_GPU_Matrix);
-
-    for (epoch = 1; epoch <= EPOCHS; epoch++)
-    {
-        printf("\n(%d / %d epochs)\n",
-               epoch, EPOCHS);
-
-        // Forward pass
-        TQ_Perceptron_Forward(X, &P);
-        printf("Activation = \n");
-        TQ_Matrix_Print(P.activation_v);
-
-        // Backward pass
-        TQ_Perceptron_Backward(&P, Y);
-        printf("dW = \n");
-        TQ_Matrix_Print(P.dW);
-    }
+    printf("Forward pass\n");
+    TQ_Perceptron_Forward(X, &P);
+    printf("Activation = \n");
+    TQ_Matrix_Print(P.activation_v);
+    printf("Backward pass\n");
+    TQ_Perceptron_Backward(&P, Y);
+    printf("dW = \n");
+    TQ_Matrix_Print(P.dW);
 
     TQ_Matrix_Free(&X);
     TQ_Matrix_Free(&Y);

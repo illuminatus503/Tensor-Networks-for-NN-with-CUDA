@@ -50,6 +50,24 @@ void TQ_Matrix_Clone(struct TQ_Matrix input,
     }
 }
 
+void TQ_Matrix_CopyData(struct TQ_Matrix input,
+                        struct TQ_Matrix *output)
+{
+    unsigned int i;
+
+    if (input.dims_prod != output->dims_prod)
+    {
+        fprintf(stderr,
+                "<TQ CopyData> INPUT (num_elemns) != OUTPUT\n");
+        exit(1);
+    }
+
+    for (i = 0; i < input.dims_prod; i++)
+    {
+        output->h_mem[i] = input.h_mem[i];
+    }
+}
+
 void TQ_Matrix_Extend(struct TQ_Matrix input,
                       struct TQ_Matrix *output,
                       unsigned int *new_dims,

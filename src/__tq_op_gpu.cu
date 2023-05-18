@@ -5,91 +5,7 @@
 #include "../include/__tq_datatypes.h"
 #include "../include/__tq_op_gpu.cuh"
 
-#define THR_PER_BLOCK 512
-
-__global__ void cuda_vec_add(float *A, float *B, float *C, int N)
-{
-
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-
-    if (i < N)
-    {
-        C[i] = A[i] + B[i];
-    }
-}
-
-__global__ void cuda_vec_sub(float *A, float *B, float *C, int N)
-{
-
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-
-    if (i < N)
-    {
-        C[i] = A[i] - B[i];
-    }
-}
-
-__global__ void cuda_vec_scalar_prod(float *v, float *A, float *C, int N)
-{
-
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-
-    if (i < N)
-    {
-        C[i] = (*v) * A[i];
-    }
-}
-
-__global__ void cuda_vec_dot_prod(float *A, float *B, float *C, int N)
-{
-    __shared__ float tmp[THR_PER_BLOCK];
-
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    float suma = 0.0;
-
-    if (i < N)
-    {
-        tmp[threadIdx.x] = A[i] * B[i];
-        __syncthreads(); // Barrera
-
-        if (threadIdx.x == 0)
-        {
-            for (int j = 0; j < THR_PER_BLOCK; j++)
-            {
-                suma += tmp[j];
-            }
-
-            atomicAdd(C, suma);
-        }
-    }
-}
-
-// __global__ void cuda_vec_prod(float *A, float *B, float *C, int N)
-// {
-//     int i = blockIdx.x * blockDim.x + threadIdx.x;
-//     if (i < N)
-//         C[i] = A[i] * B[i];
-// }
-
-__global__ void cuda_matrix_prod(float *A, float *B, float *C, int N, int M)
-{
-    int i;
-    int row, col;
-    col = blockIdx.x * blockDim.x + threadIdx.x;
-    row = blockIdx.y * blockDim.y + threadIdx.y;
-
-    float tmp_sum = 0.0f;
-
-    if (row < N && col < M)
-    {
-        for (i = 0; i < M; i++)
-        {
-            tmp_sum += A[row * N + i] * B[i * M + col];
-        }
-
-        C[row * N + col] = tmp_sum;
-    }
-}
+#include "__tq_op_gpu_kernels.cu"
 
 void __TQ_GPUMat_Add(struct TQ_Matrix one,
                      struct TQ_Matrix other,
@@ -176,8 +92,8 @@ void __TQ_GPUMat_Add(struct TQ_Matrix one,
     cudaFree(d_other);
     cudaFree(d_result);
 
-    printf("Matrix ADD: %ld float(s) -- Elapsed time: %1.3fms\n",
-           num_float, t_exe);
+    // printf("Matrix ADD: %ld float(s) -- Elapsed time: %1.3fms\n",
+    //        num_float, t_exe);
 }
 
 void __TQ_GPUMat_Sub(struct TQ_Matrix one,
@@ -265,8 +181,8 @@ void __TQ_GPUMat_Sub(struct TQ_Matrix one,
     cudaFree(d_other);
     cudaFree(d_result);
 
-    printf("Matrix SUB: %ld float(s) -- Elapsed time: %1.3fms\n",
-           num_float, t_exe);
+    // printf("Matrix SUB: %ld float(s) -- Elapsed time: %1.3fms\n",
+    //        num_float, t_exe);
 }
 
 void __TQ_GPUMat_ProdNum(struct TQ_Matrix one,
@@ -354,8 +270,8 @@ void __TQ_GPUMat_ProdNum(struct TQ_Matrix one,
     cudaFree(d_factor);
     cudaFree(d_result);
 
-    printf("Matrix PROD by FACTOR: %ld float(s) -- Elapsed time: %1.3fms\n",
-           num_float, t_exe);
+    // printf("Matrix PROD by FACTOR: %ld float(s) -- Elapsed time: %1.3fms\n",
+    //        num_float, t_exe);
 }
 
 void __TQ_GPUMat_Prod(struct TQ_Matrix one,
@@ -377,16 +293,20 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
      */
     // Device memory for matrix ONE
     float *d_one;
+    int *d_one_w;
+    int *d_one_h;
 
     // Device memory for matrix OTHER
     float *d_other;
+    int *d_other_w;
+    int *d_other_h;
 
     // Device memory for matrix RESULT (the sum of both matrices)
     float *d_result;
 
     // Execution env.
-    dim3 thread_per_block;
-    dim3 blocks_per_grid;
+    dim3 block_size;
+    dim3 grid_size;
 
     long num_float = result->dims_prod;
 
@@ -396,7 +316,17 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
     gpuErrchk(
         cudaMalloc((void **)(&d_one), one.length_bytes));
     gpuErrchk(
+        cudaMalloc((void **)(&d_one_w), sizeof(int)));
+    gpuErrchk(
+        cudaMalloc((void **)(&d_one_h), sizeof(int)));
+
+    gpuErrchk(
         cudaMalloc((void **)(&d_other), other.length_bytes));
+    gpuErrchk(
+        cudaMalloc((void **)(&d_other_w), sizeof(int)));
+    gpuErrchk(
+        cudaMalloc((void **)(&d_other_h), sizeof(int)));
+
     gpuErrchk(
         cudaMalloc((void **)(&d_result), result->length_bytes));
 
@@ -407,33 +337,40 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
         cudaMemcpy((void *)(d_one), (const void *)(one.h_mem), one.length_bytes,
                    cudaMemcpyHostToDevice));
     gpuErrchk(
+        cudaMemcpy((void *)(d_one_h), (const void *)(&(one.dimensions[0])), sizeof(int),
+                   cudaMemcpyHostToDevice));
+    gpuErrchk(
+        cudaMemcpy((void *)(d_one_w), (const void *)(&(one.dimensions[1])), sizeof(int),
+                   cudaMemcpyHostToDevice));
+
+    gpuErrchk(
         cudaMemcpy((void *)(d_other), (const void *)(other.h_mem), other.length_bytes,
+                   cudaMemcpyHostToDevice));
+    gpuErrchk(
+        cudaMemcpy((void *)(d_other_h), (const void *)(&(other.dimensions[0])), sizeof(int),
+                   cudaMemcpyHostToDevice));
+    gpuErrchk(
+        cudaMemcpy((void *)(d_other_w), (const void *)(&(other.dimensions[1])), sizeof(int),
                    cudaMemcpyHostToDevice));
 
     /**
      * SET UP CUDA execution env.
-     *      thread_per_block: number of CUDA threads per grid block
-     *      blocks_per_grid: number of blocks in grid
+     *      block_size: number of CUDA threads per grid block
+     *      grid_size: number of blocks in grid
      */
+    block_size.x = TILE_WIDTH;
+    block_size.y = TILE_WIDTH;
+    block_size.z = 1;
 
-    if (result->dims_prod > THR_PER_BLOCK)
-    {
-        thread_per_block.x = THR_PER_BLOCK;
-        thread_per_block.y = THR_PER_BLOCK;
-        blocks_per_grid.x = ceil((float)result->dimensions[0] / (float)thread_per_block.x);
-        blocks_per_grid.y = ceil((float)result->dimensions[1] / (float)thread_per_block.y);
-    }
-    else
-    {
-        thread_per_block.x = result->dimensions[0];
-        thread_per_block.y = result->dimensions[1];
-        blocks_per_grid.x = 1;
-        blocks_per_grid.y = 1;
-    }
+    grid_size.x = ceil(result->dimensions[0] / (float)block_size.x);
+    grid_size.y = ceil(result->dimensions[1] / (float)block_size.y);
+    grid_size.z = 1;
 
     // ! RUN - KERNEL
     gpuErrchk(cudaEventRecord(start));
-    cuda_matrix_prod<<<blocks_per_grid, thread_per_block>>>(d_one, d_other, d_result, result->dimensions[0], result->dimensions[1]);
+    cuda_mat_prod<<<grid_size, block_size>>>(d_one, d_one_w, d_one_h,
+                                             d_other, d_other_w, d_other_h,
+                                             d_result);
     gpuErrchk(cudaEventRecord(stop));
     // ! END - KERNEL
 
@@ -454,11 +391,15 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
      * CLEAN DEVICE mem.
      */
     cudaFree(d_one);
+    cudaFree(d_one_w);
+    cudaFree(d_one_h);
     cudaFree(d_other);
+    cudaFree(d_other_w);
+    cudaFree(d_other_h);
     cudaFree(d_result);
 
-    printf("Matrix MATRIX PROD: %ld float(s) -- Elapsed time: %1.3fms\n",
-           num_float, t_exe);
+    // printf("Matrix MATRIX PROD: %ld float(s) -- Elapsed time: %1.3fms\n",
+    //        num_float, t_exe);
 }
 
 void __TQ_GPUVec_Dot(struct TQ_Matrix one,
@@ -552,6 +493,6 @@ void __TQ_GPUVec_Dot(struct TQ_Matrix one,
     cudaFree(d_other);
     cudaFree(d_result);
 
-    printf("Matrix VecDot PROD: %ld float(s) -- Elapsed time: %1.3fms\n",
-           num_float, t_exe);
+    // printf("Matrix VecDot PROD: %ld float(s) -- Elapsed time: %1.3fms\n",
+    //        num_float, t_exe);
 }

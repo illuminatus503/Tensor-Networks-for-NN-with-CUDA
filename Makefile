@@ -32,7 +32,7 @@ INC_DIR = include
 
 ## Make variables ##
 # Target executable name:
-BIN = test
+BIN = par23
 
 #! Object files: (!!Añadir aquí cada nuevo fichero fuente!!)
 OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/tq_matrix.o $(OBJ_DIR)/__tq_op_cpu.o $(OBJ_DIR)/__tq_op_gpu.o $(OBJ_DIR)/tq_perceptron.o

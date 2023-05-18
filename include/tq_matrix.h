@@ -1,13 +1,10 @@
-#ifndef TQMAT_H_
-#define TQMAT_H_
+#ifndef _TQMAT_H_
+#define _TQMAT_H_
 
 #include "__tq_datatypes.h"
 #include "__tq_op_cpu.h"
 #include "__tq_op_gpu.cuh"
 
-/**
- * Matrix CONSTRUCTION/DESTRUCTION
- */
 
 void TQ_Matrix_Create(struct TQ_Matrix *matrix,
                       unsigned int *dimensions,
@@ -16,6 +13,9 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
 
 void TQ_Matrix_Clone(struct TQ_Matrix input,
                      struct TQ_Matrix *output);
+
+void TQ_Matrix_CopyData(struct TQ_Matrix input,
+                        struct TQ_Matrix *output);
 
 void TQ_Matrix_Extend(struct TQ_Matrix input,
                       struct TQ_Matrix *output,
