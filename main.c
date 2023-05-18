@@ -7,29 +7,34 @@
 void init_args(int argc, char **argv,
                unsigned int *n_elems)
 {
-    if (argc >= 2)
+    if (argc == 3)
     {
-        (*n_elems) = atoi(argv[1]);
+        n_elems[0] = atoi(argv[1]);
+        n_elems[1] = atoi(argv[2]);
     }
     else
     {
-        (*n_elems) = 1;
+        fprintf(stderr,
+                "ERROR: es necesario pasar [1] número de ejemplos y [2] número de características\n");
+        exit(1);
     }
 }
 
 int main(int argc, char **argv)
 {
-    unsigned int num_elems;
+    unsigned int input_dims[2];
     unsigned int dims[2];
 
     TQ_Perceptron P;
-    TQ_Matrix X, A;
 
-    init_args(argc, argv, &num_elems);
+    TQ_Matrix X;
+    TQ_Matrix Y;
+
+    init_args(argc, argv, input_dims);
 
     // Input matrix: random data.
-    dims[0] = num_elems;
-    dims[1] = num_elems;
+    dims[0] = input_dims[0];
+    dims[1] = input_dims[1];
     TQ_Matrix_Create(&X,
                      dims, 2,
                      TQ_GPU_Matrix);
@@ -38,18 +43,32 @@ int main(int argc, char **argv)
     printf("X = \n");
     TQ_Matrix_Print(X);
 
+    // Output matrix: random data.
+    dims[1] = 1;
+    TQ_Matrix_Create(&Y,
+                     dims, 2,
+                     TQ_GPU_Matrix);
+    TQ_Matrix_Unif(&Y);
+
+    printf("Y = \n");
+    TQ_Matrix_Print(Y);
+
     /**
      * Perceptron create & launch
      */
     printf("Creating perceptron...\n");
-    TQ_Perceptron_Create(&P, num_elems, TQ_GPU_Matrix);
-    printf("Pass forward\n");
-    TQ_Perceptron_Forward(X, P, &A);
+    TQ_Perceptron_Create(&P, input_dims[1], TQ_GPU_Matrix);
+    printf("Forward pass\n");
+    TQ_Perceptron_Forward(X, &P);
     printf("Activation = \n");
-    TQ_Matrix_Print(A);
+    TQ_Matrix_Print(P.activation_v);
+    printf("Backward pass\n");
+    TQ_Perceptron_Backward(&P, Y);
+    printf("dW = \n");
+    TQ_Matrix_Print(P.dW);
 
     TQ_Matrix_Free(&X);
-    TQ_Matrix_Free(&A);
-
+    TQ_Matrix_Free(&Y);
+    TQ_Perceptron_Free(&P);
     return 0;
 }

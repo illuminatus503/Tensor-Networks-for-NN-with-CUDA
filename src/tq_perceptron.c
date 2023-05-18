@@ -23,16 +23,18 @@ float dsigmoid(float z)
  */
 
 void TQ_Perceptron_Create(struct TQ_Perceptron *neuron,
-                          unsigned int num_input,
+                          unsigned int num_features,
                           enum TQ_Matrix_type type)
 {
     unsigned int dims[2];
-    dims[0] = 1; // Weights + Bias
-    dims[1] = num_input + 1;
+    dims[0] = num_features + 1; // Weights + Bias
+    dims[1] = 1;
 
     // Creamos el vector de pesos: vector random.
     TQ_Matrix_Create(&(neuron->weights_vector), dims, 2, type);
     TQ_Matrix_Unif(&(neuron->weights_vector));
+    // Existen placeholder para Z, A que se inicializan una vez hecho
+    // el forward pass.
 
     // Guardamos el tipo del perceptron: CPU o GPU
     neuron->type = type;
@@ -45,27 +47,55 @@ void TQ_Perceptron_Create(struct TQ_Perceptron *neuron,
 void TQ_Perceptron_Free(struct TQ_Perceptron *neuron)
 {
     TQ_Matrix_Free(&(neuron->weights_vector));
+
+    if (neuron->ext_input.h_mem != NULL)
+    {
+        TQ_Matrix_Free(&(neuron->ext_input));
+    }
+
+    if (neuron->transfer_f.h_mem != NULL)
+    {
+        TQ_Matrix_Free(&(neuron->transfer_f));
+    }
+
+    if (neuron->activation_v.h_mem != NULL)
+    {
+        TQ_Matrix_Free(&(neuron->activation_v));
+    }
+
+    if (neuron->dW.h_mem != NULL)
+    {
+        TQ_Matrix_Free(&(neuron->dW));
+    }
 }
 
-/**
- * Forward pass.
- */
 void TQ_Perceptron_Forward(struct TQ_Matrix X,
-                           struct TQ_Perceptron neuron,
-                           struct TQ_Matrix *A)
+                           struct TQ_Perceptron *neuron)
 {
-    struct TQ_Matrix Z, X_ext;
-
     // Extiende la entrada por 1 en la dimensión 0 (filas)
-    unsigned int ext_dims[2] = {X.dimensions[0] + 1, X.dimensions[1]};
-    TQ_Matrix_Extend(X, &X_ext, ext_dims, 2, 1.0f);
+    unsigned int ext_dims[2] = {X.dimensions[0], X.dimensions[1] + 1};
+    TQ_Matrix_Extend(X, &(neuron->ext_input), ext_dims, 2, 1.0f);
 
-    // Transference function (neuron.weights_vector = W_T, by def.)
-    TQ_Matrix_Prod(neuron.weights_vector, X_ext, &Z);
+    // Transference function (neuron.weights_vector = W, by def.)
+    TQ_Matrix_Prod(neuron->ext_input, neuron->weights_vector, &(neuron->transfer_f));
 
     // Activation
-    TQ_Matrix_Apply(Z, neuron.activ.activation, A);
-    
-    TQ_Matrix_Free(&Z);
-    TQ_Matrix_Free(&X_ext);
+    TQ_Matrix_Apply(neuron->transfer_f, neuron->activ.activation, &(neuron->activation_v));
+}
+
+void TQ_Perceptron_Backward(struct TQ_Perceptron *neuron,
+                            struct TQ_Matrix Y)
+{
+    struct TQ_Matrix dZ; // delJ/delZ equiv.
+    struct TQ_Matrix X_t;
+
+    // dZ (Y.sizeof(i), 1)
+    TQ_Matrix_Sub(neuron->activation_v, Y, &dZ);
+
+    // dW (Y.sizeof(i) + 1, 1) Incluye el bias
+    TQ_Matrix_T(neuron->ext_input, &X_t);
+    TQ_Matrix_Prod(X_t, dZ, &(neuron->dW));
+
+    TQ_Matrix_Free(&dZ);
+    TQ_Matrix_Free(&X_t);
 }

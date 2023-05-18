@@ -233,6 +233,49 @@ unsigned char __TQ_Send_To_CPU(struct TQ_Matrix one,
     return to_cpu;
 }
 
+void __TQ_VecDot_TEST(struct TQ_Matrix one,
+                      struct TQ_Matrix other)
+{
+    if (one.num_dims != 1)
+    {
+        fprintf(stderr,
+                "<TQ VecDot (!1) ERROR> ONE dims.\n");
+        exit(1);
+    }
+
+    if (other.num_dims != 1)
+    {
+        fprintf(stderr,
+                "<TQ VecDot (!1) ERROR> OTHER dims.\n");
+        exit(1);
+    }
+
+    // Comprobación de las dimensiones:
+    if (one.dimensions[0] != other.dimensions[0])
+    {
+        fprintf(stderr,
+                "<TQ VecDot ERROR> %d != %d\n",
+                one.dimensions[0], other.dimensions[0]);
+        exit(1);
+    }
+}
+
+void TQ_Vec_Dot(struct TQ_Matrix one,
+                struct TQ_Matrix other,
+                float *result)
+{
+    __TQ_VecDot_TEST(one, other);
+
+    if (__TQ_Send_To_CPU(one, other))
+    {
+        __TQ_CPUVec_Dot(one, other, result);
+    }
+    else
+    {
+        __TQ_GPUVec_Dot(one, other, result);
+    }
+}
+
 void __TQ_MatAdd_TEST(struct TQ_Matrix one,
                       struct TQ_Matrix other)
 {
@@ -266,6 +309,8 @@ void TQ_Matrix_Add(struct TQ_Matrix one,
                    struct TQ_Matrix *result)
 {
     __TQ_MatAdd_TEST(one, other);
+    TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
+
     if (__TQ_Send_To_CPU(one, other))
     {
         __TQ_CPUMat_Add(one, other, result);
@@ -281,6 +326,8 @@ void TQ_Matrix_Sub(struct TQ_Matrix one,
                    struct TQ_Matrix *result)
 {
     __TQ_MatAdd_TEST(one, other);
+    TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
+
     if (__TQ_Send_To_CPU(one, other))
     {
         __TQ_CPUMat_Sub(one, other, result);
@@ -297,14 +344,14 @@ void __TQ_MatProd_TEST(struct TQ_Matrix one,
     if (one.num_dims != 2)
     {
         fprintf(stderr,
-                "<TQ MatProd (!2) ERROR> ONE dims.");
+                "<TQ MatProd (!2) ERROR> ONE dims.\n");
         exit(1);
     }
 
     if (other.num_dims != 2)
     {
         fprintf(stderr,
-                "<TQ MatProd (!2) ERROR> OTHER dims.");
+                "<TQ MatProd (!2) ERROR> OTHER dims.\n");
         exit(1);
     }
 
@@ -359,6 +406,8 @@ void TQ_Matrix_ProdNum(struct TQ_Matrix one,
                        float factor,
                        struct TQ_Matrix *result)
 {
+    TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
+
     if (one.type == TQ_GPU_Matrix)
     {
         __TQ_GPUMat_ProdNum(one, factor, result);
@@ -366,49 +415,6 @@ void TQ_Matrix_ProdNum(struct TQ_Matrix one,
     else
     {
         __TQ_CPUMat_ProdNum(one, factor, result); // Por defecto, será más rápido.
-    }
-}
-
-void __TQ_VecDot_TEST(struct TQ_Matrix one,
-                      struct TQ_Matrix other)
-{
-    if (one.num_dims != 1)
-    {
-        fprintf(stderr,
-                "<TQ VecDot (!1) ERROR> ONE dims.");
-        exit(1);
-    }
-
-    if (other.num_dims != 1)
-    {
-        fprintf(stderr,
-                "<TQ VecDot (!1) ERROR> OTHER dims.");
-        exit(1);
-    }
-
-    // Comprobación de las dimensiones:
-    if (one.dimensions[0] != other.dimensions[0])
-    {
-        fprintf(stderr,
-                "<TQ VecDot ERROR> %d != %d\n",
-                one.dimensions[0], other.dimensions[0]);
-        exit(1);
-    }
-}
-
-void TQ_Vec_Dot(struct TQ_Matrix one,
-                struct TQ_Matrix other,
-                float *result)
-{
-    __TQ_VecDot_TEST(one, other);
-
-    if (__TQ_Send_To_CPU(one, other))
-    {
-        __TQ_CPUVec_Dot(one, other, result);
-    }
-    else
-    {
-        __TQ_GPUVec_Dot(one, other, result);
     }
 }
 
@@ -429,6 +435,7 @@ void TQ_Matrix_T(struct TQ_Matrix input,
     // TODO Traspuesta en GPU
     // Traspuesta en CPU (localidad)
     TQ_Matrix_Create(output, dims, 2, input.type);
+
     for (j = 0; j < input.dimensions[0]; j++)
     {
         for (i = 0; i < input.dimensions[1]; i++)

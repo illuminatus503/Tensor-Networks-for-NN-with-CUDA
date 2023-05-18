@@ -5,7 +5,7 @@
 #include "../include/__tq_datatypes.h"
 #include "../include/__tq_op_gpu.cuh"
 
-#define THR_PER_BLOCK 1024
+#define THR_PER_BLOCK 512
 
 __global__ void cuda_vec_add(float *A, float *B, float *C, int N)
 {
