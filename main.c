@@ -5,6 +5,7 @@
 #include "include/tq_perceptron.h"
 
 #define EPOCHS 10
+#define GENERAL_TYPE TQ_CPU_Matrix
 
 void init_args(int argc, char **argv,
                unsigned int *n_elems)
@@ -41,7 +42,7 @@ int main(int argc, char **argv)
     dims[1] = input_dims[1];
     TQ_Matrix_Create(&X,
                      dims, 2,
-                     TQ_GPU_Matrix);
+                     GENERAL_TYPE);
     TQ_Matrix_Unif(&X);
 
     printf("X = \n");
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
     dims[1] = 1;
     TQ_Matrix_Create(&Y,
                      dims, 2,
-                     TQ_GPU_Matrix);
+                     GENERAL_TYPE);
     TQ_Matrix_Unif(&Y);
 
     printf("Y = \n");
@@ -61,7 +62,8 @@ int main(int argc, char **argv)
      * Perceptron create & launch
      */
     printf("Creating perceptron...\n");
-    TQ_Perceptron_Create(&P, input_dims[1], TQ_GPU_Matrix);
+    TQ_Perceptron_Create(&P, input_dims[1],
+                         GENERAL_TYPE);
 
     for (epoch = 1; epoch <= EPOCHS; epoch++)
     {
