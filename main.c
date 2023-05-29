@@ -1,88 +1,43 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
-#include "include/tq_matrix.h"
-#include "include/tq_perceptron.h"
-
-#define EPOCHS 10
-#define GENERAL_TYPE TQ_CPU_Matrix
-
-void init_args(int argc, char **argv,
-               unsigned int *n_elems)
-{
-    if (argc == 3)
-    {
-        n_elems[0] = atoi(argv[1]);
-        n_elems[1] = atoi(argv[2]);
-    }
-    else
-    {
-        fprintf(stderr,
-                "ERROR: es necesario pasar [1] número de ejemplos y [2] número de características\n");
-        exit(1);
-    }
-}
+#include "include/tq_mem.h"
 
 int main(int argc, char **argv)
 {
-    unsigned int epoch;
+    int i;
 
-    unsigned int input_dims[2];
-    unsigned int dims[2];
+    unsigned char backing_buffer[256];
+    Arena a = {0};
+    arena_init(&a, backing_buffer, 256);
 
-    TQ_Perceptron P;
-
-    TQ_Matrix X;
-    TQ_Matrix Y;
-
-    init_args(argc, argv, input_dims);
-
-    // Input matrix: random data.
-    dims[0] = input_dims[0];
-    dims[1] = input_dims[1];
-    TQ_Matrix_Create(&X,
-                     dims, 2,
-                     GENERAL_TYPE);
-    TQ_Matrix_Unif(&X);
-
-    printf("X = \n");
-    TQ_Matrix_Print(X);
-
-    // Output matrix: random data.
-    dims[1] = 1;
-    TQ_Matrix_Create(&Y,
-                     dims, 2,
-                     GENERAL_TYPE);
-    TQ_Matrix_Unif(&Y);
-
-    printf("Y = \n");
-    TQ_Matrix_Print(Y);
-
-    /**
-     * Perceptron create & launch
-     */
-    printf("Creating perceptron...\n");
-    TQ_Perceptron_Create(&P, input_dims[1],
-                         GENERAL_TYPE);
-
-    for (epoch = 1; epoch <= EPOCHS; epoch++)
+    for (i = 0; i < 10; i++)
     {
-        printf("\n(%d / %d epochs)\n",
-               epoch, EPOCHS);
+        int *x;
+        float *f;
+        char *str;
 
-        // Forward pass
-        TQ_Perceptron_Forward(X, &P);
-        printf("Activation = \n");
-        TQ_Matrix_Print(P.activation_v);
+        // Reset all arena offsets for each loop
+        arena_free_all(&a);
 
-        // Backward pass
-        TQ_Perceptron_Backward(&P, Y);
-        printf("dW = \n");
-        TQ_Matrix_Print(P.dW);
+        x = (int *)arena_alloc(&a, sizeof(int));
+        f = (float *)arena_alloc(&a, sizeof(float));
+        str = (char *)arena_alloc(&a, 10);
+
+        *x = 123;
+        *f = 987;
+        memmove(str, "Hellope", 7);
+
+        printf("%p: %d\n", x, *x);
+        printf("%p: %f\n", f, *f);
+        printf("%p: %s\n", str, str);
+
+        str = (char *)arena_resize(&a, (void *)str, 10, 16);
+        memmove(str + 7, " world!", 7);
+        printf("%p: %s\n", str, str);
     }
 
-    TQ_Matrix_Free(&X);
-    TQ_Matrix_Free(&Y);
-    TQ_Perceptron_Free(&P);
+    arena_free_all(&a);
+
     return 0;
 }
