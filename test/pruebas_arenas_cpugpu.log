@@ -1,0 +1,17 @@
+***TEST CPU
+x: 0x7ffd3b1417d0: 123
+f: 0x7ffd3b1417e0: 987.000000
+x: 0x7ffd3b1417d0: 123
+f: 0x7ffd3b1417e0: 987.000000
+x: 0x7ffd3b1417d0: 123
+f: 0x7ffd3b1417e0: 987.000000
+
+***TEST GPU
+x: 0x7fbd63a00000 (123)
+f: 0x7fbd63a00010 (987.000000)
+x: 0x7fbd63a00000 (123)
+f: 0x7fbd63a00010 (987.000000)
+x: 0x7fbd63a00000 (123)
+f: 0x7fbd63a00010 (987.000000)
+
+** Mem. contigua, tanto en CPU como GPU (?)

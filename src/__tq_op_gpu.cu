@@ -1,9 +1,8 @@
-#include <cuda.h>
-#include <cuda_runtime.h>
 #include <stdio.h>
 
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include "../include/cuda_errchk.cuh"
 
 #include "../include/__tq_datatypes.h"
 #include "../include/__tq_op_gpu.cuh"
