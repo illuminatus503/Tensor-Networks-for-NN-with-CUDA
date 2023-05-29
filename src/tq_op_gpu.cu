@@ -1,9 +1,6 @@
 #include <stdio.h>
 
-#include <cuda.h>
-#include <cuda_runtime.h>
-#include "../include/cuda_errchk.cuh"
-
+#include "../include/cuda_base.cuh"
 #include "../include/tq_datatypes.h"
 #include "../include/tq_op_gpu.cuh"
 
@@ -157,9 +154,9 @@ __global__ void cuda_mat_prod(float *M, int *Mw, int *Mh,
     }
 }
 
-void __TQ_GPUMat_Add(struct TQ_Matrix one,
-                     struct TQ_Matrix other,
-                     struct TQ_Matrix *result)
+void __TQ_GPUMat_Add(TQ_Matrix one,
+                     TQ_Matrix other,
+                     TQ_Matrix *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -246,9 +243,9 @@ void __TQ_GPUMat_Add(struct TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_Sub(struct TQ_Matrix one,
-                     struct TQ_Matrix other,
-                     struct TQ_Matrix *result)
+void __TQ_GPUMat_Sub(TQ_Matrix one,
+                     TQ_Matrix other,
+                     TQ_Matrix *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -335,9 +332,9 @@ void __TQ_GPUMat_Sub(struct TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_ProdNum(struct TQ_Matrix one,
+void __TQ_GPUMat_ProdNum(TQ_Matrix one,
                          float factor,
-                         struct TQ_Matrix *result)
+                         TQ_Matrix *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -424,9 +421,9 @@ void __TQ_GPUMat_ProdNum(struct TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_Prod(struct TQ_Matrix one,
-                      struct TQ_Matrix other,
-                      struct TQ_Matrix *result)
+void __TQ_GPUMat_Prod(TQ_Matrix one,
+                      TQ_Matrix other,
+                      TQ_Matrix *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -552,8 +549,8 @@ void __TQ_GPUMat_Prod(struct TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUVec_Dot(struct TQ_Matrix one,
-                     struct TQ_Matrix other,
+void __TQ_GPUVec_Dot(TQ_Matrix one,
+                     TQ_Matrix other,
                      float *result)
 {
     /**

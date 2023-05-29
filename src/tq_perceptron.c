@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <math.h>
 
 #include "../include/tq_perceptron.h"
@@ -22,9 +21,9 @@ float dsigmoid(float z)
  * Creating a perceptron.
  */
 
-void TQ_Perceptron_Create(struct TQ_Perceptron *neuron,
+void TQ_Perceptron_Create(TQ_Perceptron *neuron,
                           unsigned int num_features,
-                          enum TQ_Matrix_type type)
+                          TQ_Matrix_type type)
 {
     unsigned int dims[2];
     dims[0] = num_features + 1; // Weights + Bias
@@ -44,7 +43,7 @@ void TQ_Perceptron_Create(struct TQ_Perceptron *neuron,
     neuron->activ.deriv_activation = &dsigmoid;
 }
 
-void TQ_Perceptron_Free(struct TQ_Perceptron *neuron)
+void TQ_Perceptron_Free(TQ_Perceptron *neuron)
 {
     TQ_Matrix_Free(&(neuron->weights_vector));
 
@@ -69,8 +68,8 @@ void TQ_Perceptron_Free(struct TQ_Perceptron *neuron)
     }
 }
 
-void TQ_Perceptron_Forward(struct TQ_Matrix X,
-                           struct TQ_Perceptron *neuron)
+void TQ_Perceptron_Forward(TQ_Matrix X,
+                           TQ_Perceptron *neuron)
 {
     // Extiende la entrada por 1 en la dimensión 0 (filas)
     unsigned int ext_dims[2] = {X.dimensions[0], X.dimensions[1] + 1};
@@ -83,11 +82,11 @@ void TQ_Perceptron_Forward(struct TQ_Matrix X,
     TQ_Matrix_Apply(neuron->transfer_f, neuron->activ.activation, &(neuron->activation_v));
 }
 
-void TQ_Perceptron_Backward(struct TQ_Perceptron *neuron,
-                            struct TQ_Matrix Y)
+void TQ_Perceptron_Backward(TQ_Perceptron *neuron,
+                            TQ_Matrix Y)
 {
-    struct TQ_Matrix dZ; // delJ/delZ equiv.
-    struct TQ_Matrix X_t;
+    TQ_Matrix dZ; // delJ/delZ equiv.
+    TQ_Matrix X_t;
 
     // dZ (Y.sizeof(i), 1)
     TQ_Matrix_Sub(neuron->activation_v, Y, &dZ);

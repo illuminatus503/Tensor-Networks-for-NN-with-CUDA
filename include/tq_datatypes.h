@@ -1,19 +1,19 @@
 #ifndef TQ_DATATYPES_H_
 #define TQ_DATATYPES_H_
 
-enum TQ_Matrix_type
+typedef enum TQ_Matrix_type
 {
     TQ_GPU_Matrix,
     TQ_CPU_Matrix
-} typedef TQ_Matrix_t;
+} TQ_Matrix_type;
 
-struct TQ_Matrix
+typedef struct TQ_Matrix
 {
-    TQ_Matrix_t type;
+    TQ_Matrix_type type;
     unsigned int num_dims;
     unsigned int *dimensions;
     unsigned long length_bytes, dims_prod;
     float *h_mem;
-} typedef TQ_Matrix;
+} TQ_Matrix;
 
 #endif

@@ -7,10 +7,10 @@
 /**
  * LA CREACIÓN & DESTRUCCIÓN
  */
-void TQ_Matrix_Create(struct TQ_Matrix *matrix,
+void TQ_Matrix_Create(TQ_Matrix *matrix,
                       unsigned int *dimensions,
                       unsigned int num_dims,
-                      TQ_Matrix_t type)
+                      TQ_Matrix_type type)
 {
     size_t i;
     size_t total_size = 1;
@@ -38,8 +38,8 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
     matrix->h_mem = (float *)malloc(matrix->length_bytes);
 }
 
-void TQ_Matrix_Clone(struct TQ_Matrix input,
-                     struct TQ_Matrix *output)
+void TQ_Matrix_Clone(TQ_Matrix input,
+                     TQ_Matrix *output)
 {
     unsigned int i;
 
@@ -50,8 +50,8 @@ void TQ_Matrix_Clone(struct TQ_Matrix input,
     }
 }
 
-void TQ_Matrix_CopyData(struct TQ_Matrix input,
-                        struct TQ_Matrix *output)
+void TQ_Matrix_CopyData(TQ_Matrix input,
+                        TQ_Matrix *output)
 {
     unsigned int i;
 
@@ -68,8 +68,8 @@ void TQ_Matrix_CopyData(struct TQ_Matrix input,
     }
 }
 
-void TQ_Matrix_Extend(struct TQ_Matrix input,
-                      struct TQ_Matrix *output,
+void TQ_Matrix_Extend(TQ_Matrix input,
+                      TQ_Matrix *output,
                       unsigned int *new_dims,
                       unsigned int num_dims,
                       float fill_val)
@@ -148,14 +148,14 @@ void __TQ_Matrix_Print(float *tensor,
     }
 }
 
-void TQ_Matrix_Print(struct TQ_Matrix matrix)
+void TQ_Matrix_Print(TQ_Matrix matrix)
 {
     __TQ_Matrix_Print((float *)matrix.h_mem,
                       matrix.dimensions, matrix.num_dims, 0);
     printf("\n");
 }
 
-void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value)
+void TQ_Matrix_Init(TQ_Matrix *matrix, float value)
 {
     unsigned int i;
     for (i = 0; i < matrix->dims_prod; i++)
@@ -164,7 +164,7 @@ void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value)
     }
 }
 
-void TQ_Matrix_Eyes(struct TQ_Matrix *matrix)
+void TQ_Matrix_Eyes(TQ_Matrix *matrix)
 {
     unsigned int i, j;
     unsigned int indices[matrix->num_dims];
@@ -189,7 +189,7 @@ void TQ_Matrix_Eyes(struct TQ_Matrix *matrix)
     }
 }
 
-void TQ_Matrix_Ones(struct TQ_Matrix *matrix)
+void TQ_Matrix_Ones(TQ_Matrix *matrix)
 {
     unsigned int i;
     for (i = 0; i < matrix->dims_prod; i++)
@@ -198,7 +198,7 @@ void TQ_Matrix_Ones(struct TQ_Matrix *matrix)
     }
 }
 
-void TQ_Matrix_Zeros(struct TQ_Matrix *matrix)
+void TQ_Matrix_Zeros(TQ_Matrix *matrix)
 {
     unsigned int i;
     for (i = 0; i < matrix->dims_prod; i++)
@@ -207,7 +207,7 @@ void TQ_Matrix_Zeros(struct TQ_Matrix *matrix)
     }
 }
 
-void TQ_Matrix_Rand(struct TQ_Matrix *matrix, float min, float max)
+void TQ_Matrix_Rand(TQ_Matrix *matrix, float min, float max)
 {
     unsigned int i;
     srand(time(NULL));
@@ -222,7 +222,7 @@ void TQ_Matrix_Rand(struct TQ_Matrix *matrix, float min, float max)
     }
 }
 
-void TQ_Matrix_Unif(struct TQ_Matrix *matrix)
+void TQ_Matrix_Unif(TQ_Matrix *matrix)
 {
     unsigned int i;
     srand(time(NULL));
@@ -233,7 +233,7 @@ void TQ_Matrix_Unif(struct TQ_Matrix *matrix)
     }
 }
 
-void TQ_Matrix_Free(struct TQ_Matrix *matrix)
+void TQ_Matrix_Free(TQ_Matrix *matrix)
 {
     free(matrix->h_mem);
     free(matrix->dimensions);
@@ -243,16 +243,16 @@ void TQ_Matrix_Free(struct TQ_Matrix *matrix)
  * OPERACIONES CON MATRICES
  */
 
-unsigned char __TQ_Send_To_CPU(struct TQ_Matrix one,
-                               struct TQ_Matrix other)
+unsigned char __TQ_Send_To_CPU(TQ_Matrix one,
+                               TQ_Matrix other)
 {
     unsigned char to_cpu;
     to_cpu = ((one.type != TQ_GPU_Matrix) || (other.type != TQ_GPU_Matrix));
     return to_cpu;
 }
 
-void __TQ_VecDot_TEST(struct TQ_Matrix one,
-                      struct TQ_Matrix other)
+void __TQ_VecDot_TEST(TQ_Matrix one,
+                      TQ_Matrix other)
 {
     if (one.num_dims != 1)
     {
@@ -278,8 +278,8 @@ void __TQ_VecDot_TEST(struct TQ_Matrix one,
     }
 }
 
-void TQ_Vec_Dot(struct TQ_Matrix one,
-                struct TQ_Matrix other,
+void TQ_Vec_Dot(TQ_Matrix one,
+                TQ_Matrix other,
                 float *result)
 {
     __TQ_VecDot_TEST(one, other);
@@ -294,8 +294,8 @@ void TQ_Vec_Dot(struct TQ_Matrix one,
     }
 }
 
-void __TQ_MatAdd_TEST(struct TQ_Matrix one,
-                      struct TQ_Matrix other)
+void __TQ_MatAdd_TEST(TQ_Matrix one,
+                      TQ_Matrix other)
 {
     // Mismo número de elementos?
     if (one.num_dims != other.num_dims)
@@ -322,9 +322,9 @@ void __TQ_MatAdd_TEST(struct TQ_Matrix one,
     // Everything OK!
 }
 
-void TQ_Matrix_Add(struct TQ_Matrix one,
-                   struct TQ_Matrix other,
-                   struct TQ_Matrix *result)
+void TQ_Matrix_Add(TQ_Matrix one,
+                   TQ_Matrix other,
+                   TQ_Matrix *result)
 {
     __TQ_MatAdd_TEST(one, other);
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
@@ -339,9 +339,9 @@ void TQ_Matrix_Add(struct TQ_Matrix one,
     }
 }
 
-void TQ_Matrix_Sub(struct TQ_Matrix one,
-                   struct TQ_Matrix other,
-                   struct TQ_Matrix *result)
+void TQ_Matrix_Sub(TQ_Matrix one,
+                   TQ_Matrix other,
+                   TQ_Matrix *result)
 {
     __TQ_MatAdd_TEST(one, other);
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
@@ -356,8 +356,8 @@ void TQ_Matrix_Sub(struct TQ_Matrix one,
     }
 }
 
-void __TQ_MatProd_TEST(struct TQ_Matrix one,
-                       struct TQ_Matrix other)
+void __TQ_MatProd_TEST(TQ_Matrix one,
+                       TQ_Matrix other)
 {
     if (one.num_dims != 2)
     {
@@ -386,9 +386,9 @@ void __TQ_MatProd_TEST(struct TQ_Matrix one,
     // OK!
 }
 
-void TQ_Matrix_Prod(struct TQ_Matrix one,
-                    struct TQ_Matrix other,
-                    struct TQ_Matrix *result)
+void TQ_Matrix_Prod(TQ_Matrix one,
+                    TQ_Matrix other,
+                    TQ_Matrix *result)
 {
     enum TQ_Matrix_type type;
     unsigned char to_cpu;
@@ -420,9 +420,9 @@ void TQ_Matrix_Prod(struct TQ_Matrix one,
     }
 }
 
-void TQ_Matrix_ProdNum(struct TQ_Matrix one,
+void TQ_Matrix_ProdNum(TQ_Matrix one,
                        float factor,
-                       struct TQ_Matrix *result)
+                       TQ_Matrix *result)
 {
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
 
@@ -436,8 +436,8 @@ void TQ_Matrix_ProdNum(struct TQ_Matrix one,
     }
 }
 
-void TQ_Matrix_T(struct TQ_Matrix input,
-                 struct TQ_Matrix *output)
+void TQ_Matrix_T(TQ_Matrix input,
+                 TQ_Matrix *output)
 {
     if (input.num_dims != 2)
     {
@@ -463,9 +463,9 @@ void TQ_Matrix_T(struct TQ_Matrix input,
     }
 }
 
-void TQ_Matrix_Apply(struct TQ_Matrix input,
+void TQ_Matrix_Apply(TQ_Matrix input,
                      float (*function)(float),
-                     struct TQ_Matrix *output)
+                     TQ_Matrix *output)
 {
     unsigned int i;
     TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);

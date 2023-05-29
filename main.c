@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
-#include <cuda.h>
-#include <cuda_runtime.h>
-#include "include/cuda_errchk.cuh"
-
+#include "include/cuda_base.cuh"
 #include "include/tq_mem.h"
 
 #define BUFF_SIZE 256 // In bytes

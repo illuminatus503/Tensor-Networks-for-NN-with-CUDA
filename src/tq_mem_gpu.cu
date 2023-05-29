@@ -4,10 +4,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include <cuda.h>
-#include <cuda_runtime.h>
-#include "../include/cuda_errchk.cuh"
-
+#include "../include/cuda_base.cuh"
 #include "../include/tq_mem_datatype.h"
 #include "../include/tq_mem_gpu.cuh"
 

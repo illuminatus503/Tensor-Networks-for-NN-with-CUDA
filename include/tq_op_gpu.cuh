@@ -3,24 +3,24 @@
 
 #include "tq_datatypes.h"
 
-void __TQ_GPUMat_Add(struct TQ_Matrix one,
-                     struct TQ_Matrix other,
-                     struct TQ_Matrix *result);
+void __TQ_GPUMat_Add(TQ_Matrix one,
+                     TQ_Matrix other,
+                     TQ_Matrix *result);
 
-void __TQ_GPUMat_Sub(struct TQ_Matrix one,
-                     struct TQ_Matrix other,
-                     struct TQ_Matrix *result);
+void __TQ_GPUMat_Sub(TQ_Matrix one,
+                     TQ_Matrix other,
+                     TQ_Matrix *result);
 
-void __TQ_GPUMat_ProdNum(struct TQ_Matrix one,
+void __TQ_GPUMat_ProdNum(TQ_Matrix one,
                          float factor,
-                         struct TQ_Matrix *result);
+                         TQ_Matrix *result);
 
-void __TQ_GPUMat_Prod(struct TQ_Matrix one,
-                      struct TQ_Matrix other,
-                      struct TQ_Matrix *result);
+void __TQ_GPUMat_Prod(TQ_Matrix one,
+                      TQ_Matrix other,
+                      TQ_Matrix *result);
 
-void __TQ_GPUVec_Dot(struct TQ_Matrix one,
-                     struct TQ_Matrix other,
+void __TQ_GPUVec_Dot(TQ_Matrix one,
+                     TQ_Matrix other,
                      float *result);
 
 #endif
