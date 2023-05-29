@@ -1,9 +1,9 @@
 #ifndef _TQMAT_H_
 #define _TQMAT_H_
 
-#include "__tq_datatypes.h"
-#include "__tq_op_cpu.h"
-#include "__tq_op_gpu.cuh"
+#include "tq_datatypes.h"
+#include "tq_op_cpu.h"
+#include "tq_op_gpu.cuh"
 
 
 void TQ_Matrix_Create(struct TQ_Matrix *matrix,

@@ -4,8 +4,8 @@
 #include <cuda_runtime.h>
 #include "../include/cuda_errchk.cuh"
 
-#include "../include/__tq_datatypes.h"
-#include "../include/__tq_op_gpu.cuh"
+#include "../include/tq_datatypes.h"
+#include "../include/tq_op_gpu.cuh"
 
 #define THR_PER_BLOCK 512
 #define TILE_WIDTH 16

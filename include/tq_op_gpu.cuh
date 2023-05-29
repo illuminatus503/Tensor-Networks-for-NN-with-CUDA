@@ -1,7 +1,7 @@
 #ifndef GPU_TQMAT_H_
 #define GPU_TQMAT_H_
 
-#include "__tq_datatypes.h"
+#include "tq_datatypes.h"
 
 void __TQ_GPUMat_Add(struct TQ_Matrix one,
                      struct TQ_Matrix other,

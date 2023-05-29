@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/__tq_op_cpu.h"
+#include "../include/tq_op_cpu.h"
 
 unsigned long __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
                                      unsigned int *indices,
