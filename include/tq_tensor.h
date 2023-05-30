@@ -1,10 +1,10 @@
-#ifndef _TQ_OP_H_
-#define _TQ_OP_H_
+#ifndef _TQ_MAT_H_
+#define _TQ_MAT_H_
 
-#include "tq_datatypes.h"
+#include "tq_tensor_dtypes.h"
 
-#include "tq_op_cpu.h"
-#include "tq_op_gpu.cuh"
+#include "tq_tensor_cpu.h"
+#include "tq_tensor_gpu.cuh"
 
 void TQ_Matrix_Create(TQ_Tensor *matrix,
                       unsigned int *dimensions,

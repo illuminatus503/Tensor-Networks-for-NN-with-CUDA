@@ -1,7 +1,7 @@
 #ifndef CPU_TQMAT_H_
 #define CPU_TQMAT_H_
 
-#include "tq_datatypes.h"
+#include "tq_tensor_dtypes.h"
 
 /**
  * Matrix Index operations.

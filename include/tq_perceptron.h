@@ -1,7 +1,7 @@
 #ifndef _TQ_NEURAL_H_
 #define _TQ_NEURAL_H_
 
-#include "tq_matrix.h"
+#include "tq_tensor.h"
 
 typedef struct TQ_Activation
 {

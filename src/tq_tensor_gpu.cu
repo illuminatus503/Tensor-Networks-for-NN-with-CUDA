@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 #include "../include/cuda_base.cuh"
-#include "../include/tq_datatypes.h"
-#include "../include/tq_op_gpu.cuh"
+
+#include "../include/tq_tensor_gpu.cuh"
 
 #define THR_PER_BLOCK 512
 #define TILE_WIDTH 16

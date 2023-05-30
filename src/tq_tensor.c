@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../include/tq_matrix.h"
+#include "../include/tq_tensor.h"
 
 /**
  * LA CREACIÓN & DESTRUCCIÓN

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/tq_op_cpu.h"
+#include "../include/tq_tensor_cpu.h"
 
 unsigned long __TQ_Tensor_IndexToPos(TQ_Tensor matrix,
                                      unsigned int *indices,

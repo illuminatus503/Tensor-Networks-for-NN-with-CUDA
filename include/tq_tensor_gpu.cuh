@@ -1,7 +1,7 @@
 #ifndef GPU_TQMAT_H_
 #define GPU_TQMAT_H_
 
-#include "tq_datatypes.h"
+#include "tq_tensor_dtypes.h"
 
 void __TQ_GPUMat_Add(TQ_Tensor one,
                      TQ_Tensor other,

@@ -20,7 +20,7 @@ CUDA_LINK_LIBS= -lcudart
 
 ## PROJECT ##
 # Target executable name:
-BIN = par23
+BIN = run
 
 ## Project file structure ##
 # Source file directory:
