@@ -1,8 +1,124 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../include/tq_global_mem.h"
 #include "../include/tq_tensor_mem.h"
 
+/**
+ * ALLOC.
+ */
+
+void TQ_Matrix_Create(TQ_Tensor *matrix,
+                      unsigned int *dimensions,
+                      unsigned int num_dims,
+                      TQ_Tensor_type type)
+{
+    unsigned int i;
+
+    // Guardamos el tipo de la nueva matriz.
+    matrix->type = type;
+
+    // Guardar las dimensiones de la nueva matriz.
+    matrix->dimensions = (unsigned int *)malloc(num_dims * sizeof(unsigned int));
+    matrix->num_dims = num_dims;
+    matrix->length = 1;
+
+    for (i = 0; i < num_dims; i++)
+    {
+        matrix->dimensions[i] = dimensions[i];
+        matrix->length *= (unsigned long)dimensions[i];
+    }
+
+    // Length, in bytes, of the memory space
+    matrix->length_bytes = (matrix->length) * sizeof(float);
+
+    // TODO. Separate
+    // - CPU allocation
+    // - GPU allocation
+    // matrix->mem = (float *)arena_alloc(&TQ_CPU_ARENA, matrix->length_bytes);
+    matrix->mem = (float *)malloc(matrix->length_bytes);
+}
+
+void TQ_Matrix_Free(TQ_Tensor *matrix)
+{
+    free(matrix->mem);
+    free(matrix->dimensions);
+}
+
+void TQ_Matrix_Clone(TQ_Tensor input,
+                     TQ_Tensor *output)
+{
+    unsigned int i;
+
+    TQ_Matrix_Create(output,
+                     input.dimensions,
+                     input.num_dims,
+                     input.type);
+
+    for (i = 0; i < input.length; i++)
+    {
+        output->mem[i] = input.mem[i];
+    }
+}
+
+void TQ_Matrix_CopyData(TQ_Tensor input,
+                        TQ_Tensor *output)
+{
+    unsigned int i;
+
+    if (input.length != output->length)
+    {
+        fprintf(stderr,
+                "<TQ CopyData> INPUT (num_elemns) != OUTPUT\n");
+        exit(1);
+    }
+
+    for (i = 0; i < input.length; i++)
+    {
+        output->mem[i] = input.mem[i];
+    }
+}
+
+void TQ_Matrix_Extend(TQ_Tensor input,
+                      TQ_Tensor *output,
+                      unsigned int *new_dims,
+                      unsigned int num_dims,
+                      float fill_val)
+{
+    unsigned long i;
+
+    unsigned long new_dims_prod = 1;
+    for (i = 0; i < num_dims; i++)
+    {
+        new_dims_prod *= new_dims[i];
+    }
+
+    if (new_dims_prod < input.length)
+    {
+        fprintf(stderr,
+                "<TQ Matrix Reshape> Unable to reshape matrix: %lu != %lu\n",
+                input.length, new_dims_prod);
+        exit(1);
+    }
+
+    TQ_Matrix_Create(output, new_dims, num_dims, input.type);
+
+    for (i = 0; i < new_dims_prod; i++)
+    {
+        if (__TQ_Tensor_Pos_Is_Valid(input, i))
+        {
+            output->mem[i] = input.mem[i];
+        }
+        else
+        {
+            output->mem[i] = fill_val;
+        }
+    }
+}
+
+/**
+ * INDEX op.
+ */
 unsigned long __TQ_Tensor_IndexToPos(TQ_Tensor matrix,
                                      unsigned int *indices,
                                      unsigned int num_ind)
@@ -116,105 +232,8 @@ void TQ_Tensor_SetElem(TQ_Tensor *matrix,
 }
 
 /**
- * LA CREACIÓN & DESTRUCCIÓN
+ * PRINT
  */
-void TQ_Matrix_Create(TQ_Tensor *matrix,
-                      unsigned int *dimensions,
-                      unsigned int num_dims,
-                      TQ_Tensor_type type)
-{
-    size_t i;
-    size_t total_size = 1;
-
-    // Guardamos el tipo de la nueva matriz.
-    matrix->type = type;
-
-    // Guardar las dimensiones de la nueva matriz.
-    matrix->dimensions = (unsigned int *)malloc(num_dims * sizeof(unsigned int));
-    matrix->num_dims = num_dims;
-    for (i = 0; i < num_dims; i++)
-    {
-        matrix->dimensions[i] = dimensions[i];
-        total_size *= (unsigned long)dimensions[i];
-    }
-
-    // Guardamos el tamaño total de la matriz en bytes (float).
-    // Esto será útil cuando haya que reservar memoria en Device o Host.
-    matrix->length_bytes = total_size * sizeof(float);
-
-    // prod = PROD. (i = 0..k) matrix.dims[i] (para el cálculo de índices)
-    matrix->length = total_size;
-
-    // Reservamos la memoria para los datos de la matriz.
-    matrix->mem = (float *)malloc(matrix->length_bytes);
-}
-
-void TQ_Matrix_Clone(TQ_Tensor input,
-                     TQ_Tensor *output)
-{
-    unsigned int i;
-
-    TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
-    for (i = 0; i < input.length; i++)
-    {
-        output->mem[i] = input.mem[i];
-    }
-}
-
-void TQ_Matrix_CopyData(TQ_Tensor input,
-                        TQ_Tensor *output)
-{
-    unsigned int i;
-
-    if (input.length != output->length)
-    {
-        fprintf(stderr,
-                "<TQ CopyData> INPUT (num_elemns) != OUTPUT\n");
-        exit(1);
-    }
-
-    for (i = 0; i < input.length; i++)
-    {
-        output->mem[i] = input.mem[i];
-    }
-}
-
-void TQ_Matrix_Extend(TQ_Tensor input,
-                      TQ_Tensor *output,
-                      unsigned int *new_dims,
-                      unsigned int num_dims,
-                      float fill_val)
-{
-    unsigned long i;
-
-    unsigned long new_dims_prod = 1;
-    for (i = 0; i < num_dims; i++)
-    {
-        new_dims_prod *= new_dims[i];
-    }
-
-    if (new_dims_prod < input.length)
-    {
-        fprintf(stderr,
-                "<TQ Matrix Reshape> Unable to reshape matrix: %lu != %lu\n",
-                input.length, new_dims_prod);
-        exit(1);
-    }
-
-    TQ_Matrix_Create(output, new_dims, num_dims, input.type);
-
-    for (i = 0; i < new_dims_prod; i++)
-    {
-        if (__TQ_Tensor_Pos_Is_Valid(input, i))
-        {
-            output->mem[i] = input.mem[i];
-        }
-        else
-        {
-            output->mem[i] = fill_val;
-        }
-    }
-}
 
 void __TQ_Matrix_Print(float *tensor,
                        unsigned int *dims,
@@ -261,13 +280,8 @@ void __TQ_Matrix_Print(float *tensor,
 
 void TQ_Matrix_Print(TQ_Tensor matrix)
 {
+    // TODO. Si una matriz es de GPU, traer sus datos de GPU a CPU
     __TQ_Matrix_Print((float *)matrix.mem,
                       matrix.dimensions, matrix.num_dims, 0);
     printf("\n");
-}
-
-void TQ_Matrix_Free(TQ_Tensor *matrix)
-{
-    free(matrix->mem);
-    free(matrix->dimensions);
 }

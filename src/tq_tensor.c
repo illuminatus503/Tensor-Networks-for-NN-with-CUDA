@@ -19,7 +19,7 @@ void __TQ_MatAdd_TEST(TQ_Tensor one,
         fprintf(stderr,
                 "<TQ Matrix Dims SIZE ERROR> %ul != %ul\n",
                 one.num_dims, other.num_dims);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     // Mismas dimensiones?
@@ -31,7 +31,7 @@ void __TQ_MatAdd_TEST(TQ_Tensor one,
             fprintf(stderr,
                     "<TQ Matrix Dims ERROR> %ul != %ul\n",
                     one.dimensions[i], other.dimensions[i]);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -79,14 +79,14 @@ void __TQ_MatProd_TEST(TQ_Tensor one,
     {
         fprintf(stderr,
                 "<TQ MatProd (!2) ERROR> ONE dims.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     if (other.num_dims != 2)
     {
         fprintf(stderr,
                 "<TQ MatProd (!2) ERROR> OTHER dims.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     // Comprobación de las dimensiones:
@@ -96,7 +96,7 @@ void __TQ_MatProd_TEST(TQ_Tensor one,
                 "<TQ MatProd ERROR> (%d, %d) & (%d, %d)\n",
                 one.dimensions[0], one.dimensions[1],
                 other.dimensions[0], other.dimensions[1]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     // OK!
@@ -112,17 +112,16 @@ void TQ_Matrix_Prod(TQ_Tensor one,
     __TQ_MatProd_TEST(one, other);
     to_cpu = __TQ_Send_To_CPU(one, other);
 
+    type = TQ_GPU_Matrix;
     if (to_cpu)
     {
         type = TQ_CPU_Matrix;
     }
-    else
-    {
-        type = TQ_GPU_Matrix;
-    }
 
     // Reservamos memoria.
-    unsigned int dimensions[] = {one.dimensions[0], other.dimensions[1]};
+    unsigned int dimensions[] = {
+        one.dimensions[0],
+        other.dimensions[1]};
     TQ_Matrix_Create(result, dimensions, 2, type);
 
     // Aplicamos el producto de matrices
@@ -160,23 +159,19 @@ void TQ_Matrix_T(TQ_Tensor input,
         fprintf(stderr,
                 "<TQ TQ_matrix_T> Num dims %d != 2\n",
                 input.num_dims);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
-    unsigned int i, j;
-    unsigned int dims[2] = {input.dimensions[1], input.dimensions[0]};
+    output->mem = input.mem;
 
-    // TODO Traspuesta en GPU
-    // Traspuesta en CPU (localidad)
-    TQ_Matrix_Create(output, dims, 2, input.type);
+    output->type = input.type;
 
-    for (j = 0; j < input.dimensions[0]; j++)
-    {
-        for (i = 0; i < input.dimensions[1]; i++)
-        {
-            output->mem[i * dims[0] + j] = input.mem[j * dims[0] + i];
-        }
-    }
+    output->num_dims = input.num_dims;
+    output->dimensions[0] = input.dimensions[1];
+    output->dimensions[1] = input.dimensions[0];
+
+    output->length = input.length;
+    output->length_bytes = input.length_bytes;
 }
 
 void TQ_Matrix_Apply(TQ_Tensor input,
@@ -184,7 +179,8 @@ void TQ_Matrix_Apply(TQ_Tensor input,
                      TQ_Tensor *output)
 {
     unsigned int i;
-    TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
+
+    TQ_Matrix_Clone()
 
     for (i = 0; i < input.length; i++)
     {
