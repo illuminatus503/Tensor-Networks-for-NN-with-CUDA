@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     //                  dims, NDIMS,
     //                  TQ_GPU_Matrix);
 
-    // TQ_Matrix_Init(&A, 6.998f);
+    // TQ_Matrix_ValueInit(&A, 6.998f);
     // TQ_Matrix_Ones(&A);
     // TQ_Matrix_Zeros(&A);
     // TQ_Matrix_Eyes(&A);

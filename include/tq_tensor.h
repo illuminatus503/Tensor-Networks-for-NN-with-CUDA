@@ -2,43 +2,10 @@
 #define _TQ_MAT_H_
 
 #include "tq_tensor_dtypes.h"
-
+#include "tq_tensor_init.h"
+#include "tq_tensor_mem.h"
 #include "tq_tensor_cpu.h"
 #include "tq_tensor_gpu.cuh"
-
-void TQ_Matrix_Create(TQ_Tensor *matrix,
-                      unsigned int *dimensions,
-                      unsigned int num_dims,
-                      TQ_Tensor_type type);
-
-void TQ_Matrix_Clone(TQ_Tensor input,
-                     TQ_Tensor *output);
-
-void TQ_Matrix_CopyData(TQ_Tensor input,
-                        TQ_Tensor *output);
-
-void TQ_Matrix_Extend(TQ_Tensor input,
-                      TQ_Tensor *output,
-                      unsigned int *new_dims,
-                      unsigned int num_dims,
-                      float fill_val);
-
-void TQ_Matrix_Free(TQ_Tensor *matrix);
-
-void TQ_Matrix_Print(TQ_Tensor matrix);
-
-void TQ_Matrix_Init(TQ_Tensor *matrix, float value);
-
-void TQ_Matrix_Ones(TQ_Tensor *matrix);
-void TQ_Matrix_Zeros(TQ_Tensor *matrix);
-void TQ_Matrix_Eyes(TQ_Tensor *matrix);
-
-void TQ_Matrix_Unif(TQ_Tensor *matrix);
-void TQ_Matrix_Rand(TQ_Tensor *matrix, float min, float max);
-
-void TQ_Vec_Dot(TQ_Tensor one,
-                TQ_Tensor other,
-                float *result);
 
 void TQ_Matrix_Add(TQ_Tensor one,
                    TQ_Tensor other,

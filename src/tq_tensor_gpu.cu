@@ -154,9 +154,9 @@ __global__ void cuda_mat_prod(float *M, int *Mw, int *Mh,
     }
 }
 
-void __TQ_GPUMat_Add(TQ_Tensor one,
-                     TQ_Tensor other,
-                     TQ_Tensor *result)
+void TQ_GPUMat_Add(TQ_Tensor one,
+                   TQ_Tensor other,
+                   TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -243,9 +243,9 @@ void __TQ_GPUMat_Add(TQ_Tensor one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_Sub(TQ_Tensor one,
-                     TQ_Tensor other,
-                     TQ_Tensor *result)
+void TQ_GPUMat_Sub(TQ_Tensor one,
+                   TQ_Tensor other,
+                   TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -332,9 +332,9 @@ void __TQ_GPUMat_Sub(TQ_Tensor one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_ProdNum(TQ_Tensor one,
-                         float factor,
-                         TQ_Tensor *result)
+void TQ_GPUMat_ProdNum(TQ_Tensor one,
+                       float factor,
+                       TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -421,9 +421,9 @@ void __TQ_GPUMat_ProdNum(TQ_Tensor one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_Prod(TQ_Tensor one,
-                      TQ_Tensor other,
-                      TQ_Tensor *result)
+void TQ_GPUMat_Prod(TQ_Tensor one,
+                    TQ_Tensor other,
+                    TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -546,100 +546,5 @@ void __TQ_GPUMat_Prod(TQ_Tensor one,
     cudaFree(d_result);
 
     // printf("Matrix MATRIX PROD: %ld float(s) -- Elapsed time: %1.3fms\n",
-    //        num_float, t_exe);
-}
-
-void __TQ_GPUVec_Dot(TQ_Tensor one,
-                     TQ_Tensor other,
-                     float *result)
-{
-    /**
-     * Time measurement, using CUDA events.
-     */
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-
-    // Execution time, in ms.
-    float t_exe;
-
-    /**
-     * Device mem.
-     */
-    // Device memory for matrix ONE
-    float *d_one;
-
-    // Device memory for matrix OTHER
-    float *d_other;
-
-    // Device memory for matrix RESULT (the sum of both matrices)
-    float *d_result;
-
-    // Execution env.
-    int thread_per_block;
-    int block_in_grid;
-    long num_float = one.length;
-
-    /**
-     * Allocate device memory.
-     */
-    gpuErrchk(
-        cudaMalloc((void **)(&d_one), one.length_bytes));
-    gpuErrchk(
-        cudaMalloc((void **)(&d_other), other.length_bytes));
-    gpuErrchk(
-        cudaMalloc((void **)(&d_result), sizeof(float)));
-
-    /**
-     * Copy host mem. ONE, OTHER to device.
-     */
-    gpuErrchk(
-        cudaMemcpy((void *)(d_one), (const void *)(one.mem), one.length_bytes,
-                   cudaMemcpyHostToDevice));
-    gpuErrchk(
-        cudaMemcpy((void *)(d_other), (const void *)(other.mem), other.length_bytes,
-                   cudaMemcpyHostToDevice));
-
-    /**
-     * SET result mem. to 0
-     */
-    gpuErrchk(
-        cudaMemset((void *)(d_result), 0x0, sizeof(float)));
-
-    /**
-     * SET UP CUDA execution env.
-     *      thr_per_blk: number of CUDA threads per grid block
-     *      blk_in_grid: number of blocks in grid
-     */
-    thread_per_block = THR_PER_BLOCK;
-    block_in_grid = (int)ceil((float)num_float / thread_per_block);
-
-    // ! RUN - KERNEL
-    gpuErrchk(cudaEventRecord(start));
-    cuda_vec_dot_prod<<<block_in_grid, thread_per_block>>>(d_one, d_other, d_result, num_float);
-    gpuErrchk(cudaEventRecord(stop));
-    // ! END - KERNEL
-
-    /**
-     * Recover DATA from DEVICE
-     */
-    gpuErrchk(
-        cudaMemcpy((void *)(result), (const void *)(d_result), sizeof(float),
-                   cudaMemcpyDeviceToHost));
-
-    /**
-     * Work out elapsed time and finish operation.
-     */
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&t_exe, start, stop);
-
-    /**
-     * CLEAN DEVICE mem.
-     */
-    cudaFree(d_one);
-    cudaFree(d_other);
-    cudaFree(d_result);
-
-    // printf("Matrix VecDot PROD: %ld float(s) -- Elapsed time: %1.3fms\n",
     //        num_float, t_exe);
 }
