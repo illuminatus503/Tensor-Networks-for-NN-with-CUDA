@@ -50,9 +50,9 @@ int main(int argc, char **argv)
     unsigned int NDIMS;
     unsigned int *dims;
 
-    TQ_Matrix A_cpu, B_cpu, C_cpu;
-    TQ_Matrix A_gpu, B_gpu, C_gpu;
-    TQ_Matrix DELTA_C;
+    TQ_Tensor A_cpu, B_cpu, C_cpu;
+    TQ_Tensor A_gpu, B_gpu, C_gpu;
+    TQ_Tensor DELTA_C;
 
     // Initialise params.
     init_args(argc, argv, &NDIMS, &dims);

@@ -2,6 +2,7 @@
 #define _CUDA_CHKERR_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -14,7 +15,7 @@
         if (e != cudaSuccess)                                                                \
         {                                                                                    \
             printf("Cuda failure %s:%d: '%s'\n", __FILE__, __LINE__, cudaGetErrorString(e)); \
-            exit(0);                                                                         \
+            exit(EXIT_SUCCESS);                                                              \
         }                                                                                    \
     }
 

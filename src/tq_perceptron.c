@@ -23,7 +23,7 @@ float dsigmoid(float z)
 
 void TQ_Perceptron_Create(TQ_Perceptron *neuron,
                           unsigned int num_features,
-                          TQ_Matrix_type type)
+                          TQ_Tensor_type type)
 {
     unsigned int dims[2];
     dims[0] = num_features + 1; // Weights + Bias
@@ -47,28 +47,28 @@ void TQ_Perceptron_Free(TQ_Perceptron *neuron)
 {
     TQ_Matrix_Free(&(neuron->weights_vector));
 
-    if (neuron->ext_input.h_mem != NULL)
+    if (neuron->ext_input.mem != NULL)
     {
         TQ_Matrix_Free(&(neuron->ext_input));
     }
 
-    if (neuron->transfer_f.h_mem != NULL)
+    if (neuron->transfer_f.mem != NULL)
     {
         TQ_Matrix_Free(&(neuron->transfer_f));
     }
 
-    if (neuron->activation_v.h_mem != NULL)
+    if (neuron->activation_v.mem != NULL)
     {
         TQ_Matrix_Free(&(neuron->activation_v));
     }
 
-    if (neuron->dW.h_mem != NULL)
+    if (neuron->dW.mem != NULL)
     {
         TQ_Matrix_Free(&(neuron->dW));
     }
 }
 
-void TQ_Perceptron_Forward(TQ_Matrix X,
+void TQ_Perceptron_Forward(TQ_Tensor X,
                            TQ_Perceptron *neuron)
 {
     // Extiende la entrada por 1 en la dimensión 0 (filas)
@@ -83,10 +83,10 @@ void TQ_Perceptron_Forward(TQ_Matrix X,
 }
 
 void TQ_Perceptron_Backward(TQ_Perceptron *neuron,
-                            TQ_Matrix Y)
+                            TQ_Tensor Y)
 {
-    TQ_Matrix dZ; // delJ/delZ equiv.
-    TQ_Matrix X_t;
+    TQ_Tensor dZ; // delJ/delZ equiv.
+    TQ_Tensor X_t;
 
     // dZ (Y.sizeof(i), 1)
     TQ_Matrix_Sub(neuron->activation_v, Y, &dZ);

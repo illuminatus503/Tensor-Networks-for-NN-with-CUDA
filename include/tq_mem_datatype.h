@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+#define BUFF_SIZE 512
+
 typedef struct Arena Arena;
 struct Arena
 {

@@ -15,24 +15,24 @@ typedef struct TQ_Activation
  */
 typedef struct TQ_Perceptron
 {
-    TQ_Matrix weights_vector; // Weight vector (saved transposed)
-    TQ_Matrix ext_input;      // Extended INPUT (X) value
-    TQ_Matrix transfer_f;     // Z value of the perceptron
-    TQ_Matrix activation_v;   // A value of the perceptron
-    TQ_Matrix dW;             // delJ / delW (delta)
+    TQ_Tensor weights_vector; // Weight vector (saved transposed)
+    TQ_Tensor ext_input;      // Extended INPUT (X) value
+    TQ_Tensor transfer_f;     // Z value of the perceptron
+    TQ_Tensor activation_v;   // A value of the perceptron
+    TQ_Tensor dW;             // delJ / delW (delta)
     TQ_Activation activ;      // Activation funcion (and deriv.)
-    TQ_Matrix_type type;      // Perceptron Type: CPU or GPU?
+    TQ_Tensor_type type;      // Perceptron Type: CPU or GPU?
 } TQ_Perceptron;
 
 void TQ_Perceptron_Create(TQ_Perceptron *neuron,
                           unsigned int num_features,
-                          TQ_Matrix_type type);
+                          TQ_Tensor_type type);
 
 void TQ_Perceptron_Free(TQ_Perceptron *neuron);
 
-void TQ_Perceptron_Forward(TQ_Matrix X,
+void TQ_Perceptron_Forward(TQ_Tensor X,
                            TQ_Perceptron *neuron);
 void TQ_Perceptron_Backward(TQ_Perceptron *neuron,
-                            TQ_Matrix Y);
+                            TQ_Tensor Y);
 
 #endif

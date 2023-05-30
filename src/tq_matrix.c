@@ -7,10 +7,10 @@
 /**
  * LA CREACIÓN & DESTRUCCIÓN
  */
-void TQ_Matrix_Create(TQ_Matrix *matrix,
+void TQ_Matrix_Create(TQ_Tensor *matrix,
                       unsigned int *dimensions,
                       unsigned int num_dims,
-                      TQ_Matrix_type type)
+                      TQ_Tensor_type type)
 {
     size_t i;
     size_t total_size = 1;
@@ -32,44 +32,44 @@ void TQ_Matrix_Create(TQ_Matrix *matrix,
     matrix->length_bytes = total_size * sizeof(float);
 
     // prod = PROD. (i = 0..k) matrix.dims[i] (para el cálculo de índices)
-    matrix->dims_prod = total_size;
+    matrix->length = total_size;
 
     // Reservamos la memoria para los datos de la matriz.
-    matrix->h_mem = (float *)malloc(matrix->length_bytes);
+    matrix->mem = (float *)malloc(matrix->length_bytes);
 }
 
-void TQ_Matrix_Clone(TQ_Matrix input,
-                     TQ_Matrix *output)
+void TQ_Matrix_Clone(TQ_Tensor input,
+                     TQ_Tensor *output)
 {
     unsigned int i;
 
     TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
-    for (i = 0; i < input.dims_prod; i++)
+    for (i = 0; i < input.length; i++)
     {
-        output->h_mem[i] = input.h_mem[i];
+        output->mem[i] = input.mem[i];
     }
 }
 
-void TQ_Matrix_CopyData(TQ_Matrix input,
-                        TQ_Matrix *output)
+void TQ_Matrix_CopyData(TQ_Tensor input,
+                        TQ_Tensor *output)
 {
     unsigned int i;
 
-    if (input.dims_prod != output->dims_prod)
+    if (input.length != output->length)
     {
         fprintf(stderr,
                 "<TQ CopyData> INPUT (num_elemns) != OUTPUT\n");
         exit(1);
     }
 
-    for (i = 0; i < input.dims_prod; i++)
+    for (i = 0; i < input.length; i++)
     {
-        output->h_mem[i] = input.h_mem[i];
+        output->mem[i] = input.mem[i];
     }
 }
 
-void TQ_Matrix_Extend(TQ_Matrix input,
-                      TQ_Matrix *output,
+void TQ_Matrix_Extend(TQ_Tensor input,
+                      TQ_Tensor *output,
                       unsigned int *new_dims,
                       unsigned int num_dims,
                       float fill_val)
@@ -82,11 +82,11 @@ void TQ_Matrix_Extend(TQ_Matrix input,
         new_dims_prod *= new_dims[i];
     }
 
-    if (new_dims_prod < input.dims_prod)
+    if (new_dims_prod < input.length)
     {
         fprintf(stderr,
                 "<TQ Matrix Reshape> Unable to reshape matrix: %lu != %lu\n",
-                input.dims_prod, new_dims_prod);
+                input.length, new_dims_prod);
         exit(1);
     }
 
@@ -94,13 +94,13 @@ void TQ_Matrix_Extend(TQ_Matrix input,
 
     for (i = 0; i < new_dims_prod; i++)
     {
-        if (__TQ_Matrix_Pos_Is_Valid(input, i))
+        if (__TQ_Tensor_Pos_Is_Valid(input, i))
         {
-            output->h_mem[i] = input.h_mem[i];
+            output->mem[i] = input.mem[i];
         }
         else
         {
-            output->h_mem[i] = fill_val;
+            output->mem[i] = fill_val;
         }
     }
 }
@@ -148,30 +148,30 @@ void __TQ_Matrix_Print(float *tensor,
     }
 }
 
-void TQ_Matrix_Print(TQ_Matrix matrix)
+void TQ_Matrix_Print(TQ_Tensor matrix)
 {
-    __TQ_Matrix_Print((float *)matrix.h_mem,
+    __TQ_Matrix_Print((float *)matrix.mem,
                       matrix.dimensions, matrix.num_dims, 0);
     printf("\n");
 }
 
-void TQ_Matrix_Init(TQ_Matrix *matrix, float value)
+void TQ_Matrix_Init(TQ_Tensor *matrix, float value)
 {
     unsigned int i;
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->length; i++)
     {
-        matrix->h_mem[i] = value;
+        matrix->mem[i] = value;
     }
 }
 
-void TQ_Matrix_Eyes(TQ_Matrix *matrix)
+void TQ_Matrix_Eyes(TQ_Tensor *matrix)
 {
     unsigned int i, j;
     unsigned int indices[matrix->num_dims];
 
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->length; i++)
     {
-        __TQ_Matrix_PosToIndex(*matrix, i, indices);
+        __TQ_Tensor_PosToIndex(*matrix, i, indices);
         j = 1;
         while ((j < matrix->num_dims) && (indices[j] == indices[0]))
         {
@@ -180,34 +180,34 @@ void TQ_Matrix_Eyes(TQ_Matrix *matrix)
 
         if (j == matrix->num_dims)
         {
-            matrix->h_mem[i] = 1.0f;
+            matrix->mem[i] = 1.0f;
         }
         else
         {
-            matrix->h_mem[i] = 0.0f;
+            matrix->mem[i] = 0.0f;
         }
     }
 }
 
-void TQ_Matrix_Ones(TQ_Matrix *matrix)
+void TQ_Matrix_Ones(TQ_Tensor *matrix)
 {
     unsigned int i;
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->length; i++)
     {
-        matrix->h_mem[i] = 1.0f;
+        matrix->mem[i] = 1.0f;
     }
 }
 
-void TQ_Matrix_Zeros(TQ_Matrix *matrix)
+void TQ_Matrix_Zeros(TQ_Tensor *matrix)
 {
     unsigned int i;
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->length; i++)
     {
-        matrix->h_mem[i] = 0.0f;
+        matrix->mem[i] = 0.0f;
     }
 }
 
-void TQ_Matrix_Rand(TQ_Matrix *matrix, float min, float max)
+void TQ_Matrix_Rand(TQ_Tensor *matrix, float min, float max)
 {
     unsigned int i;
     srand(time(NULL));
@@ -215,27 +215,27 @@ void TQ_Matrix_Rand(TQ_Matrix *matrix, float min, float max)
     float rand_val;
     float range = max - min;
 
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->length; i++)
     {
         rand_val = (float)rand() / (float)RAND_MAX;
-        matrix->h_mem[i] = rand_val * range + min;
+        matrix->mem[i] = rand_val * range + min;
     }
 }
 
-void TQ_Matrix_Unif(TQ_Matrix *matrix)
+void TQ_Matrix_Unif(TQ_Tensor *matrix)
 {
     unsigned int i;
     srand(time(NULL));
 
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->length; i++)
     {
-        matrix->h_mem[i] = (float)rand() / (float)RAND_MAX;
+        matrix->mem[i] = (float)rand() / (float)RAND_MAX;
     }
 }
 
-void TQ_Matrix_Free(TQ_Matrix *matrix)
+void TQ_Matrix_Free(TQ_Tensor *matrix)
 {
-    free(matrix->h_mem);
+    free(matrix->mem);
     free(matrix->dimensions);
 }
 
@@ -243,16 +243,16 @@ void TQ_Matrix_Free(TQ_Matrix *matrix)
  * OPERACIONES CON MATRICES
  */
 
-unsigned char __TQ_Send_To_CPU(TQ_Matrix one,
-                               TQ_Matrix other)
+unsigned char __TQ_Send_To_CPU(TQ_Tensor one,
+                               TQ_Tensor other)
 {
     unsigned char to_cpu;
     to_cpu = ((one.type != TQ_GPU_Matrix) || (other.type != TQ_GPU_Matrix));
     return to_cpu;
 }
 
-void __TQ_VecDot_TEST(TQ_Matrix one,
-                      TQ_Matrix other)
+void __TQ_VecDot_TEST(TQ_Tensor one,
+                      TQ_Tensor other)
 {
     if (one.num_dims != 1)
     {
@@ -278,8 +278,8 @@ void __TQ_VecDot_TEST(TQ_Matrix one,
     }
 }
 
-void TQ_Vec_Dot(TQ_Matrix one,
-                TQ_Matrix other,
+void TQ_Vec_Dot(TQ_Tensor one,
+                TQ_Tensor other,
                 float *result)
 {
     __TQ_VecDot_TEST(one, other);
@@ -294,8 +294,8 @@ void TQ_Vec_Dot(TQ_Matrix one,
     }
 }
 
-void __TQ_MatAdd_TEST(TQ_Matrix one,
-                      TQ_Matrix other)
+void __TQ_MatAdd_TEST(TQ_Tensor one,
+                      TQ_Tensor other)
 {
     // Mismo número de elementos?
     if (one.num_dims != other.num_dims)
@@ -322,9 +322,9 @@ void __TQ_MatAdd_TEST(TQ_Matrix one,
     // Everything OK!
 }
 
-void TQ_Matrix_Add(TQ_Matrix one,
-                   TQ_Matrix other,
-                   TQ_Matrix *result)
+void TQ_Matrix_Add(TQ_Tensor one,
+                   TQ_Tensor other,
+                   TQ_Tensor *result)
 {
     __TQ_MatAdd_TEST(one, other);
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
@@ -339,9 +339,9 @@ void TQ_Matrix_Add(TQ_Matrix one,
     }
 }
 
-void TQ_Matrix_Sub(TQ_Matrix one,
-                   TQ_Matrix other,
-                   TQ_Matrix *result)
+void TQ_Matrix_Sub(TQ_Tensor one,
+                   TQ_Tensor other,
+                   TQ_Tensor *result)
 {
     __TQ_MatAdd_TEST(one, other);
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
@@ -356,8 +356,8 @@ void TQ_Matrix_Sub(TQ_Matrix one,
     }
 }
 
-void __TQ_MatProd_TEST(TQ_Matrix one,
-                       TQ_Matrix other)
+void __TQ_MatProd_TEST(TQ_Tensor one,
+                       TQ_Tensor other)
 {
     if (one.num_dims != 2)
     {
@@ -386,11 +386,11 @@ void __TQ_MatProd_TEST(TQ_Matrix one,
     // OK!
 }
 
-void TQ_Matrix_Prod(TQ_Matrix one,
-                    TQ_Matrix other,
-                    TQ_Matrix *result)
+void TQ_Matrix_Prod(TQ_Tensor one,
+                    TQ_Tensor other,
+                    TQ_Tensor *result)
 {
-    enum TQ_Matrix_type type;
+    enum TQ_Tensor_type type;
     unsigned char to_cpu;
 
     __TQ_MatProd_TEST(one, other);
@@ -420,9 +420,9 @@ void TQ_Matrix_Prod(TQ_Matrix one,
     }
 }
 
-void TQ_Matrix_ProdNum(TQ_Matrix one,
+void TQ_Matrix_ProdNum(TQ_Tensor one,
                        float factor,
-                       TQ_Matrix *result)
+                       TQ_Tensor *result)
 {
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
 
@@ -436,8 +436,8 @@ void TQ_Matrix_ProdNum(TQ_Matrix one,
     }
 }
 
-void TQ_Matrix_T(TQ_Matrix input,
-                 TQ_Matrix *output)
+void TQ_Matrix_T(TQ_Tensor input,
+                 TQ_Tensor *output)
 {
     if (input.num_dims != 2)
     {
@@ -458,20 +458,20 @@ void TQ_Matrix_T(TQ_Matrix input,
     {
         for (i = 0; i < input.dimensions[1]; i++)
         {
-            output->h_mem[i * dims[0] + j] = input.h_mem[j * dims[0] + i];
+            output->mem[i * dims[0] + j] = input.mem[j * dims[0] + i];
         }
     }
 }
 
-void TQ_Matrix_Apply(TQ_Matrix input,
+void TQ_Matrix_Apply(TQ_Tensor input,
                      float (*function)(float),
-                     TQ_Matrix *output)
+                     TQ_Tensor *output)
 {
     unsigned int i;
     TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
 
-    for (i = 0; i < input.dims_prod; i++)
+    for (i = 0; i < input.length; i++)
     {
-        output->h_mem[i] = function(input.h_mem[i]);
+        output->mem[i] = function(input.mem[i]);
     }
 }

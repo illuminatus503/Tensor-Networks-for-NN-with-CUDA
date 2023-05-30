@@ -3,11 +3,11 @@
 
 #include "../include/tq_op_cpu.h"
 
-unsigned long __TQ_Matrix_IndexToPos(TQ_Matrix matrix,
+unsigned long __TQ_Tensor_IndexToPos(TQ_Tensor matrix,
                                      unsigned int *indices,
                                      unsigned int num_ind)
 {
-    unsigned long dims_prod = matrix.dims_prod;
+    unsigned long dims_prod = matrix.length;
     unsigned long i, position = 0;
     for (i = 0; i < matrix.num_dims; i++)
     {
@@ -18,12 +18,12 @@ unsigned long __TQ_Matrix_IndexToPos(TQ_Matrix matrix,
     return position;
 }
 
-void __TQ_Matrix_PosToIndex(TQ_Matrix matrix,
+void __TQ_Tensor_PosToIndex(TQ_Tensor matrix,
                             unsigned int position,
                             unsigned int *indices)
 {
     unsigned long i;
-    unsigned long dims_prod = matrix.dims_prod;
+    unsigned long dims_prod = matrix.length;
     unsigned int pos = position;
 
     for (i = 0; i < matrix.num_dims - 1; i++)
@@ -35,13 +35,13 @@ void __TQ_Matrix_PosToIndex(TQ_Matrix matrix,
     indices[matrix.num_dims - 1] = pos;
 }
 
-unsigned char __TQ_Matrix_Pos_Is_Valid(TQ_Matrix matrix,
+unsigned char __TQ_Tensor_Pos_Is_Valid(TQ_Tensor matrix,
                                        unsigned long pos)
 {
     unsigned char is_valid;
     unsigned int i;
     unsigned int indices[matrix.num_dims];
-    __TQ_Matrix_PosToIndex(matrix, pos, indices);
+    __TQ_Tensor_PosToIndex(matrix, pos, indices);
 
     // La posición dada está dentro del rango de la matriz?
     is_valid = 1;
@@ -55,7 +55,7 @@ unsigned char __TQ_Matrix_Pos_Is_Valid(TQ_Matrix matrix,
     return is_valid;
 }
 
-float TQ_Matrix_GetElem(TQ_Matrix matrix,
+float TQ_Tensor_GetElem(TQ_Tensor matrix,
                         unsigned int *indices,
                         unsigned int num_ind)
 {
@@ -81,10 +81,10 @@ float TQ_Matrix_GetElem(TQ_Matrix matrix,
         }
     }
 
-    return matrix.h_mem[__TQ_Matrix_IndexToPos(matrix, indices, num_ind)];
+    return matrix.mem[__TQ_Tensor_IndexToPos(matrix, indices, num_ind)];
 }
 
-void TQ_Matrix_SetElem(TQ_Matrix *matrix,
+void TQ_Tensor_SetElem(TQ_Tensor *matrix,
                        float value,
                        unsigned int *indices,
                        unsigned int num_ind)
@@ -112,45 +112,45 @@ void TQ_Matrix_SetElem(TQ_Matrix *matrix,
     }
 
     // Colocar un valor en la matriz.
-    matrix->h_mem[__TQ_Matrix_IndexToPos(*matrix, indices, num_ind)] = value;
+    matrix->mem[__TQ_Tensor_IndexToPos(*matrix, indices, num_ind)] = value;
 }
 
-void __TQ_CPUMat_Add(TQ_Matrix one,
-                     TQ_Matrix other,
-                     TQ_Matrix *result)
+void __TQ_CPUMat_Add(TQ_Tensor one,
+                     TQ_Tensor other,
+                     TQ_Tensor *result)
 {
     unsigned int i;
-    for (i = 0; i < one.dims_prod; i++)
+    for (i = 0; i < one.length; i++)
     {
-        result->h_mem[i] = one.h_mem[i] + other.h_mem[i];
+        result->mem[i] = one.mem[i] + other.mem[i];
     }
 }
 
-void __TQ_CPUMat_Sub(TQ_Matrix one,
-                     TQ_Matrix other,
-                     TQ_Matrix *result)
+void __TQ_CPUMat_Sub(TQ_Tensor one,
+                     TQ_Tensor other,
+                     TQ_Tensor *result)
 {
     unsigned int i;
-    for (i = 0; i < one.dims_prod; i++)
+    for (i = 0; i < one.length; i++)
     {
-        result->h_mem[i] = one.h_mem[i] - other.h_mem[i];
+        result->mem[i] = one.mem[i] - other.mem[i];
     }
 }
 
-void __TQ_CPUMat_ProdNum(TQ_Matrix one,
+void __TQ_CPUMat_ProdNum(TQ_Tensor one,
                          float factor,
-                         TQ_Matrix *result)
+                         TQ_Tensor *result)
 {
     unsigned int i;
-    for (i = 0; i < one.dims_prod; i++)
+    for (i = 0; i < one.length; i++)
     {
-        result->h_mem[i] = factor * one.h_mem[i];
+        result->mem[i] = factor * one.mem[i];
     }
 }
 
-void __TQ_CPUMat_Prod(TQ_Matrix one,
-                      TQ_Matrix other,
-                      TQ_Matrix *result)
+void __TQ_CPUMat_Prod(TQ_Tensor one,
+                      TQ_Tensor other,
+                      TQ_Tensor *result)
 {
     unsigned int i, j, k;
 
@@ -166,11 +166,11 @@ void __TQ_CPUMat_Prod(TQ_Matrix one,
             {
                 idx[0] = i;
                 idx[1] = k;
-                elem1 = TQ_Matrix_GetElem(one, idx, 2);
+                elem1 = TQ_Tensor_GetElem(one, idx, 2);
 
                 idx[0] = k;
                 idx[1] = j;
-                elem2 = TQ_Matrix_GetElem(other, idx, 2);
+                elem2 = TQ_Tensor_GetElem(other, idx, 2);
 
                 // Producto + Suma
                 suma += (elem1 * elem2);
@@ -179,20 +179,20 @@ void __TQ_CPUMat_Prod(TQ_Matrix one,
             // Guardamos el resultado en la matriz.
             idx[0] = i;
             idx[1] = j;
-            TQ_Matrix_SetElem(result, suma, idx, 2);
+            TQ_Tensor_SetElem(result, suma, idx, 2);
         }
     }
 }
 
-void __TQ_CPUVec_Dot(TQ_Matrix one,
-                     TQ_Matrix other,
+void __TQ_CPUVec_Dot(TQ_Tensor one,
+                     TQ_Tensor other,
                      float *result)
 {
     unsigned int i;
     result[0] = 0.0f;
 
-    for (i = 0; i < one.dims_prod; i++) // Una dimensión = longitud
+    for (i = 0; i < one.length; i++) // Una dimensión = longitud
     {
-        result[0] += (one.h_mem[i] * other.h_mem[i]);
+        result[0] += (one.mem[i] * other.mem[i]);
     }
 }

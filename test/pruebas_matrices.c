@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 {
     unsigned int NDIMS;
     unsigned int *dims;
-    TQ_Matrix A, B, C;
+    TQ_Tensor A, B, C;
     float c_value;
 
     /**

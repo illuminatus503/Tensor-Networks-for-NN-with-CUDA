@@ -154,9 +154,9 @@ __global__ void cuda_mat_prod(float *M, int *Mw, int *Mh,
     }
 }
 
-void __TQ_GPUMat_Add(TQ_Matrix one,
-                     TQ_Matrix other,
-                     TQ_Matrix *result)
+void __TQ_GPUMat_Add(TQ_Tensor one,
+                     TQ_Tensor other,
+                     TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -183,7 +183,7 @@ void __TQ_GPUMat_Add(TQ_Matrix one,
     // Execution env.
     int thread_per_block;
     int block_in_grid;
-    long num_float = one.dims_prod;
+    long num_float = one.length;
 
     /**
      * Allocate device memory.
@@ -199,10 +199,10 @@ void __TQ_GPUMat_Add(TQ_Matrix one,
      * Copy host mem. ONE, OTHER to device.
      */
     gpuErrchk(
-        cudaMemcpy((void *)(d_one), (const void *)(one.h_mem), one.length_bytes,
+        cudaMemcpy((void *)(d_one), (const void *)(one.mem), one.length_bytes,
                    cudaMemcpyHostToDevice));
     gpuErrchk(
-        cudaMemcpy((void *)(d_other), (const void *)(other.h_mem), other.length_bytes,
+        cudaMemcpy((void *)(d_other), (const void *)(other.mem), other.length_bytes,
                    cudaMemcpyHostToDevice));
 
     /**
@@ -223,7 +223,7 @@ void __TQ_GPUMat_Add(TQ_Matrix one,
      * Recover DATA from DEVICE
      */
     gpuErrchk(
-        cudaMemcpy((void *)(result->h_mem), (const void *)(d_result), result->length_bytes,
+        cudaMemcpy((void *)(result->mem), (const void *)(d_result), result->length_bytes,
                    cudaMemcpyDeviceToHost));
 
     /**
@@ -243,9 +243,9 @@ void __TQ_GPUMat_Add(TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_Sub(TQ_Matrix one,
-                     TQ_Matrix other,
-                     TQ_Matrix *result)
+void __TQ_GPUMat_Sub(TQ_Tensor one,
+                     TQ_Tensor other,
+                     TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -272,7 +272,7 @@ void __TQ_GPUMat_Sub(TQ_Matrix one,
     // Execution env.
     int thread_per_block;
     int block_in_grid;
-    long num_float = one.dims_prod;
+    long num_float = one.length;
 
     /**
      * Allocate device memory.
@@ -288,10 +288,10 @@ void __TQ_GPUMat_Sub(TQ_Matrix one,
      * Copy host mem. ONE, OTHER to device.
      */
     gpuErrchk(
-        cudaMemcpy((void *)(d_one), (const void *)(one.h_mem), one.length_bytes,
+        cudaMemcpy((void *)(d_one), (const void *)(one.mem), one.length_bytes,
                    cudaMemcpyHostToDevice));
     gpuErrchk(
-        cudaMemcpy((void *)(d_other), (const void *)(other.h_mem), other.length_bytes,
+        cudaMemcpy((void *)(d_other), (const void *)(other.mem), other.length_bytes,
                    cudaMemcpyHostToDevice));
 
     /**
@@ -312,7 +312,7 @@ void __TQ_GPUMat_Sub(TQ_Matrix one,
      * Recover DATA from DEVICE
      */
     gpuErrchk(
-        cudaMemcpy((void *)(result->h_mem), (const void *)(d_result), result->length_bytes,
+        cudaMemcpy((void *)(result->mem), (const void *)(d_result), result->length_bytes,
                    cudaMemcpyDeviceToHost));
 
     /**
@@ -332,9 +332,9 @@ void __TQ_GPUMat_Sub(TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_ProdNum(TQ_Matrix one,
+void __TQ_GPUMat_ProdNum(TQ_Tensor one,
                          float factor,
-                         TQ_Matrix *result)
+                         TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -361,7 +361,7 @@ void __TQ_GPUMat_ProdNum(TQ_Matrix one,
     // Execution env.
     int thread_per_block;
     int block_in_grid;
-    long num_float = one.dims_prod;
+    long num_float = one.length;
 
     /**
      * Allocate device memory.
@@ -377,7 +377,7 @@ void __TQ_GPUMat_ProdNum(TQ_Matrix one,
      * Copy host mem. ONE, OTHER to device.
      */
     gpuErrchk(
-        cudaMemcpy((void *)(d_one), (const void *)(one.h_mem), one.length_bytes,
+        cudaMemcpy((void *)(d_one), (const void *)(one.mem), one.length_bytes,
                    cudaMemcpyHostToDevice));
     gpuErrchk(
         cudaMemcpy((void *)(d_factor), (const void *)(&factor), sizeof(float),
@@ -401,7 +401,7 @@ void __TQ_GPUMat_ProdNum(TQ_Matrix one,
      * Recover DATA from DEVICE
      */
     gpuErrchk(
-        cudaMemcpy((void *)(result->h_mem), (const void *)(d_result), result->length_bytes,
+        cudaMemcpy((void *)(result->mem), (const void *)(d_result), result->length_bytes,
                    cudaMemcpyDeviceToHost));
 
     /**
@@ -421,9 +421,9 @@ void __TQ_GPUMat_ProdNum(TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUMat_Prod(TQ_Matrix one,
-                      TQ_Matrix other,
-                      TQ_Matrix *result)
+void __TQ_GPUMat_Prod(TQ_Tensor one,
+                      TQ_Tensor other,
+                      TQ_Tensor *result)
 {
     /**
      * Time measurement, using CUDA events.
@@ -455,7 +455,7 @@ void __TQ_GPUMat_Prod(TQ_Matrix one,
     dim3 block_size;
     dim3 grid_size;
 
-    long num_float = result->dims_prod;
+    long num_float = result->length;
 
     /**
      * Allocate device memory.
@@ -481,7 +481,7 @@ void __TQ_GPUMat_Prod(TQ_Matrix one,
      * Copy host mem. ONE, OTHER to device.
      */
     gpuErrchk(
-        cudaMemcpy((void *)(d_one), (const void *)(one.h_mem), one.length_bytes,
+        cudaMemcpy((void *)(d_one), (const void *)(one.mem), one.length_bytes,
                    cudaMemcpyHostToDevice));
     gpuErrchk(
         cudaMemcpy((void *)(d_one_h), (const void *)(&(one.dimensions[0])), sizeof(int),
@@ -491,7 +491,7 @@ void __TQ_GPUMat_Prod(TQ_Matrix one,
                    cudaMemcpyHostToDevice));
 
     gpuErrchk(
-        cudaMemcpy((void *)(d_other), (const void *)(other.h_mem), other.length_bytes,
+        cudaMemcpy((void *)(d_other), (const void *)(other.mem), other.length_bytes,
                    cudaMemcpyHostToDevice));
     gpuErrchk(
         cudaMemcpy((void *)(d_other_h), (const void *)(&(other.dimensions[0])), sizeof(int),
@@ -525,7 +525,7 @@ void __TQ_GPUMat_Prod(TQ_Matrix one,
      * Recover DATA from DEVICE
      */
     gpuErrchk(
-        cudaMemcpy((void *)(result->h_mem), (const void *)(d_result), result->length_bytes,
+        cudaMemcpy((void *)(result->mem), (const void *)(d_result), result->length_bytes,
                    cudaMemcpyDeviceToHost));
 
     /**
@@ -549,8 +549,8 @@ void __TQ_GPUMat_Prod(TQ_Matrix one,
     //        num_float, t_exe);
 }
 
-void __TQ_GPUVec_Dot(TQ_Matrix one,
-                     TQ_Matrix other,
+void __TQ_GPUVec_Dot(TQ_Tensor one,
+                     TQ_Tensor other,
                      float *result)
 {
     /**
@@ -578,7 +578,7 @@ void __TQ_GPUVec_Dot(TQ_Matrix one,
     // Execution env.
     int thread_per_block;
     int block_in_grid;
-    long num_float = one.dims_prod;
+    long num_float = one.length;
 
     /**
      * Allocate device memory.
@@ -594,10 +594,10 @@ void __TQ_GPUVec_Dot(TQ_Matrix one,
      * Copy host mem. ONE, OTHER to device.
      */
     gpuErrchk(
-        cudaMemcpy((void *)(d_one), (const void *)(one.h_mem), one.length_bytes,
+        cudaMemcpy((void *)(d_one), (const void *)(one.mem), one.length_bytes,
                    cudaMemcpyHostToDevice));
     gpuErrchk(
-        cudaMemcpy((void *)(d_other), (const void *)(other.h_mem), other.length_bytes,
+        cudaMemcpy((void *)(d_other), (const void *)(other.mem), other.length_bytes,
                    cudaMemcpyHostToDevice));
 
     /**

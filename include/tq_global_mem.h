@@ -1,5 +1,5 @@
 /**
- * @file tq_mem.h
+ * @file tq_global_mem.h
  * @author David Cuenca Marcos
  * @brief
  * Custom memory allocation , based on
@@ -13,12 +13,22 @@
  *
  */
 
-#ifndef _TQ_MEM_H_
-#define _TQ_MEM_H_
+#ifndef _TQ_GLOBAL_H_
+#define _TQ_GLOBAL_H_
 
 #include "tq_mem_datatype.h"
 #include "tq_mem_cpu.h"
 #include "tq_mem_gpu.cuh"
 #include "tq_mem_tmp.h"
+
+/**
+ * Global CPU memory
+ */
+extern Arena TQ_CPU_ARENA;
+
+/**
+ * Global GPU memory
+ */
+extern Arena TQ_GPU_ARENA;
 
 #endif

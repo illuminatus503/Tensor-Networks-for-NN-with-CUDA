@@ -27,8 +27,8 @@ int main(int argc, char **argv)
 
     TQ_Perceptron P;
 
-    TQ_Matrix X;
-    TQ_Matrix Y;
+    TQ_Tensor X;
+    TQ_Tensor Y;
 
     init_args(argc, argv, input_dims);
 
