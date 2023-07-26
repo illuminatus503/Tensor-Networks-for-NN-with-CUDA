@@ -5,7 +5,7 @@
 #include "include/tq_perceptron.h"
 
 #define EPOCHS 10
-#define GENERAL_TYPE TQ_CPU_Matrix
+#define GENERAL_TYPE TQ_GPU_Matrix
 
 void init_args(int argc, char **argv,
                unsigned int *n_elems)
@@ -67,22 +67,22 @@ int main(int argc, char **argv)
 
     for (epoch = 1; epoch <= EPOCHS; epoch++)
     {
-        printf("\n(%d / %d epochs)\n",
-               epoch, EPOCHS);
+        // printf("\n(%d / %d epochs)\n",
+        //        epoch, EPOCHS);
 
         // Forward pass
         TQ_Perceptron_Forward(X, &P);
-        printf("Activation = \n");
-        TQ_Matrix_Print(P.activation_v);
 
         // Backward pass
         TQ_Perceptron_Backward(&P, Y);
-        printf("dW = \n");
-        TQ_Matrix_Print(P.dW);
     }
+
+    printf("Activation = \n");
+    TQ_Matrix_Print(P.activation_v);
 
     TQ_Matrix_Free(&X);
     TQ_Matrix_Free(&Y);
     TQ_Perceptron_Free(&P);
+    
     return 0;
 }
