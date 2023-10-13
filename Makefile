@@ -3,7 +3,7 @@ CUDA_ROOT_DIR=/usr
 
 # CC compiler options:
 CC=g++
-CC_FLAGS= -Wall -O3
+CC_FLAGS= -Wall
 CC_LIBS=
 
 # NVCC compiler options:
@@ -32,7 +32,7 @@ INC_DIR = include
 
 ## Make variables ##
 # Target executable name:
-BIN = par23
+BIN = test
 
 #! Object files: (!!Añadir aquí cada nuevo fichero fuente!!)
 OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/tq_matrix.o $(OBJ_DIR)/__tq_op_cpu.o $(OBJ_DIR)/__tq_op_gpu.o $(OBJ_DIR)/tq_perceptron.o
