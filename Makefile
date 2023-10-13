@@ -1,8 +1,8 @@
 # CUDA directory:
-CUDA_ROOT_DIR=/usr
+CUDA_ROOT_DIR=/usr/local/cuda-11.4
 
 # CC compiler options:
-CC=g++
+CC=gcc
 CC_FLAGS= -Wall -O3
 CC_LIBS=
 
