@@ -1,6 +1,5 @@
 .vscode/*
 data/*
-par23
 bin/*
 *.o
 run

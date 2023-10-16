@@ -1,59 +1,39 @@
-# CUDA directory:
-CUDA_ROOT_DIR=/usr/local/cuda-11.4
-
 # CC compiler options:
 CC=gcc
-CC_FLAGS= -Wall -O3
+CC_FLAGS= -Wall -g -O3 -lm
 CC_LIBS=
-
-# NVCC compiler options:
-NVCC=$(CUDA_ROOT_DIR)/bin/nvcc
-NVCC_FLAGS=-arch=sm_50
-NVCC_LIBS=
-
-# CUDA library directory:
-CUDA_LIB_DIR= -L$(CUDA_ROOT_DIR)/lib64
-
-# CUDA include directory:
-CUDA_INC_DIR= -I$(CUDA_ROOT_DIR)/include
-
-# CUDA linking libraries:
-CUDA_LINK_LIBS= -lcudart
 
 ## Project file structure ##
 # Source file directory:
 SRC_DIR = src
-
 # Object file directory:
 OBJ_DIR = bin
-
 # Include header file diretory:
 INC_DIR = include
 
 ## Make variables ##
 # Target executable name:
 BIN = run
+# Object files: 
+SRC_C := $(wildcard $(SRC_DIR)/*.c) main.c
+OBJS_C := $(SRC_C:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-#! Object files: (!!Añadir aquí cada nuevo fichero fuente!!)
-OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/tq_matrix.o $(OBJ_DIR)/__tq_op_cpu.o $(OBJ_DIR)/__tq_op_gpu.o $(OBJ_DIR)/tq_perceptron.o
+.PHONY: clean
 
 ## Compile ##
-# Link c and CUDA compiled object files to target executable:
-$(BIN) : $(OBJS)
-	$(CC) $(CC_FLAGS) $(OBJS) -o $@ $(CUDA_INC_DIR) $(CUDA_LIB_DIR) $(CUDA_LINK_LIBS)
+# Link c compiled object files to target executable:
+$(BIN) : $(OBJS_C) 
+	$(CC) -o $@ $(OBJS_C) $(CC_FLAGS)
 
-# Compile main.c file to object files:
-$(OBJ_DIR)/%.o : %.c
-	$(CC) $(CC_FLAGS) -c $< -o $@
+# Compile main file to object files:
+$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) -c $< -o $@ $(CC_FLAGS)
 
-# Compile C source files to object files:
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.c $(INC_DIR)/%.h
-	$(CC) $(CC_FLAGS) -c $< -o $@
-
-# Compile CUDA source files to object files:
-$(OBJ_DIR)/%.o : $(SRC_DIR)/%.cu $(INC_DIR)/%.cuh
-	$(NVCC) $(NVCC_FLAGS) -c $< -o $@ $(NVCC_LIBS)
+# Handle directories
+$(OBJ_DIR):
+	mkdir -p $@
 
 # Clean objects in object directory.
 clean:
-	$(RM) $(OBJ_DIR)/*.o $(BIN)
+	$(RM) -rv $(BIN) $(OBJ_DIR)
+

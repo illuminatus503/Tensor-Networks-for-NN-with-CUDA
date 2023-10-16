@@ -3,7 +3,6 @@
 
 #include "__tq_datatypes.h"
 #include "__tq_op_cpu.h"
-#include "__tq_op_gpu.cuh"
 
 
 void TQ_Matrix_Create(struct TQ_Matrix *matrix,

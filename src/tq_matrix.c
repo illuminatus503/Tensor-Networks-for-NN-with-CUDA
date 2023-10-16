@@ -246,9 +246,7 @@ void TQ_Matrix_Free(struct TQ_Matrix *matrix)
 unsigned char __TQ_Send_To_CPU(struct TQ_Matrix one,
                                struct TQ_Matrix other)
 {
-    unsigned char to_cpu;
-    to_cpu = ((one.type != TQ_GPU_Matrix) || (other.type != TQ_GPU_Matrix));
-    return to_cpu;
+    return ((one.type != TQ_GPU_Matrix) || (other.type != TQ_GPU_Matrix));
 }
 
 void __TQ_VecDot_TEST(struct TQ_Matrix one,
@@ -283,15 +281,7 @@ void TQ_Vec_Dot(struct TQ_Matrix one,
                 float *result)
 {
     __TQ_VecDot_TEST(one, other);
-
-    if (__TQ_Send_To_CPU(one, other))
-    {
-        __TQ_CPUVec_Dot(one, other, result);
-    }
-    else
-    {
-        __TQ_GPUVec_Dot(one, other, result);
-    }
+    __TQ_CPUVec_Dot(one, other, result);
 }
 
 void __TQ_MatAdd_TEST(struct TQ_Matrix one,
@@ -328,15 +318,7 @@ void TQ_Matrix_Add(struct TQ_Matrix one,
 {
     __TQ_MatAdd_TEST(one, other);
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
-
-    if (__TQ_Send_To_CPU(one, other))
-    {
-        __TQ_CPUMat_Add(one, other, result);
-    }
-    else
-    {
-        __TQ_GPUMat_Add(one, other, result);
-    }
+    __TQ_CPUMat_Add(one, other, result);
 }
 
 void TQ_Matrix_Sub(struct TQ_Matrix one,
@@ -345,15 +327,7 @@ void TQ_Matrix_Sub(struct TQ_Matrix one,
 {
     __TQ_MatAdd_TEST(one, other);
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
-
-    if (__TQ_Send_To_CPU(one, other))
-    {
-        __TQ_CPUMat_Sub(one, other, result);
-    }
-    else
-    {
-        __TQ_GPUMat_Sub(one, other, result);
-    }
+    __TQ_CPUMat_Sub(one, other, result);
 }
 
 void __TQ_MatProd_TEST(struct TQ_Matrix one,
@@ -391,33 +365,16 @@ void TQ_Matrix_Prod(struct TQ_Matrix one,
                     struct TQ_Matrix *result)
 {
     enum TQ_Matrix_type type;
-    unsigned char to_cpu;
 
     __TQ_MatProd_TEST(one, other);
-    to_cpu = __TQ_Send_To_CPU(one, other);
-
-    if (to_cpu)
-    {
-        type = TQ_CPU_Matrix;
-    }
-    else
-    {
-        type = TQ_GPU_Matrix;
-    }
+    type = TQ_CPU_Matrix;
 
     // Reservamos memoria.
     unsigned int dimensions[] = {one.dimensions[0], other.dimensions[1]};
     TQ_Matrix_Create(result, dimensions, 2, type);
 
     // Aplicamos el producto de matrices
-    if (to_cpu)
-    {
-        __TQ_CPUMat_Prod(one, other, result);
-    }
-    else
-    {
-        __TQ_GPUMat_Prod(one, other, result);
-    }
+    __TQ_CPUMat_Prod(one, other, result);
 }
 
 void TQ_Matrix_ProdNum(struct TQ_Matrix one,
@@ -425,15 +382,7 @@ void TQ_Matrix_ProdNum(struct TQ_Matrix one,
                        struct TQ_Matrix *result)
 {
     TQ_Matrix_Create(result, one.dimensions, one.num_dims, one.type);
-
-    if (one.type == TQ_GPU_Matrix)
-    {
-        __TQ_GPUMat_ProdNum(one, factor, result);
-    }
-    else
-    {
-        __TQ_CPUMat_ProdNum(one, factor, result); // Por defecto, será más rápido.
-    }
+    __TQ_CPUMat_ProdNum(one, factor, result);
 }
 
 void TQ_Matrix_T(struct TQ_Matrix input,
