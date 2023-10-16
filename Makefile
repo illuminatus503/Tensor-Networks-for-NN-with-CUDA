@@ -8,7 +8,7 @@ CC_LIBS=
 
 # NVCC compiler options:
 NVCC=$(CUDA_ROOT_DIR)/bin/nvcc
-NVCC_FLAGS=
+NVCC_FLAGS=-arch=sm_50
 NVCC_LIBS=
 
 # CUDA library directory:
