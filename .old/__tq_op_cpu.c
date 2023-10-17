@@ -7,7 +7,7 @@ unsigned long __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
                                      unsigned int *indices,
                                      unsigned int num_ind)
 {
-    unsigned long dims_prod = matrix.dims_prod;
+    unsigned long dims_prod = matrix.n_elems;
     unsigned long i, position = 0;
     for (i = 0; i < matrix.num_dims; i++)
     {
@@ -23,7 +23,7 @@ void __TQ_Matrix_PosToIndex(struct TQ_Matrix matrix,
                             unsigned int *indices)
 {
     unsigned long i;
-    unsigned long dims_prod = matrix.dims_prod;
+    unsigned long dims_prod = matrix.n_elems;
     unsigned int pos = position;
 
     for (i = 0; i < matrix.num_dims - 1; i++)
@@ -120,7 +120,7 @@ void __TQ_CPUMat_Add(struct TQ_Matrix one,
                      struct TQ_Matrix *result)
 {
     unsigned int i;
-    for (i = 0; i < one.dims_prod; i++)
+    for (i = 0; i < one.n_elems; i++)
     {
         result->h_mem[i] = one.h_mem[i] + other.h_mem[i];
     }
@@ -131,7 +131,7 @@ void __TQ_CPUMat_Sub(struct TQ_Matrix one,
                      struct TQ_Matrix *result)
 {
     unsigned int i;
-    for (i = 0; i < one.dims_prod; i++)
+    for (i = 0; i < one.n_elems; i++)
     {
         result->h_mem[i] = one.h_mem[i] - other.h_mem[i];
     }
@@ -142,7 +142,7 @@ void __TQ_CPUMat_ProdNum(struct TQ_Matrix one,
                          struct TQ_Matrix *result)
 {
     unsigned int i;
-    for (i = 0; i < one.dims_prod; i++)
+    for (i = 0; i < one.n_elems; i++)
     {
         result->h_mem[i] = factor * one.h_mem[i];
     }
@@ -191,7 +191,7 @@ void __TQ_CPUVec_Dot(struct TQ_Matrix one,
     unsigned int i;
     result[0] = 0.0f;
 
-    for (i = 0; i < one.dims_prod; i++) // Una dimensión = longitud
+    for (i = 0; i < one.n_elems; i++) // Una dimensión = longitud
     {
         result[0] += (one.h_mem[i] * other.h_mem[i]);
     }

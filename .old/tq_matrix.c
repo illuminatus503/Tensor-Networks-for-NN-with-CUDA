@@ -32,7 +32,7 @@ void TQ_Matrix_Create(struct TQ_Matrix *matrix,
     matrix->length_bytes = total_size * sizeof(float);
 
     // prod = PROD. (i = 0..k) matrix.dims[i] (para el cálculo de índices)
-    matrix->dims_prod = total_size;
+    matrix->n_elems = total_size;
 
     // Reservamos la memoria para los datos de la matriz.
     matrix->h_mem = (float *)malloc(matrix->length_bytes);
@@ -44,7 +44,7 @@ void TQ_Matrix_Clone(struct TQ_Matrix input,
     unsigned int i;
 
     TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
-    for (i = 0; i < input.dims_prod; i++)
+    for (i = 0; i < input.n_elems; i++)
     {
         output->h_mem[i] = input.h_mem[i];
     }
@@ -55,14 +55,14 @@ void TQ_Matrix_CopyData(struct TQ_Matrix input,
 {
     unsigned int i;
 
-    if (input.dims_prod != output->dims_prod)
+    if (input.n_elems != output->n_elems)
     {
         fprintf(stderr,
                 "<TQ CopyData> INPUT (num_elemns) != OUTPUT\n");
         exit(1);
     }
 
-    for (i = 0; i < input.dims_prod; i++)
+    for (i = 0; i < input.n_elems; i++)
     {
         output->h_mem[i] = input.h_mem[i];
     }
@@ -82,11 +82,11 @@ void TQ_Matrix_Extend(struct TQ_Matrix input,
         new_dims_prod *= new_dims[i];
     }
 
-    if (new_dims_prod < input.dims_prod)
+    if (new_dims_prod < input.n_elems)
     {
         fprintf(stderr,
                 "<TQ Matrix Reshape> Unable to reshape matrix: %lu != %lu\n",
-                input.dims_prod, new_dims_prod);
+                input.n_elems, new_dims_prod);
         exit(1);
     }
 
@@ -158,7 +158,7 @@ void TQ_Matrix_Print(struct TQ_Matrix matrix)
 void TQ_Matrix_Init(struct TQ_Matrix *matrix, float value)
 {
     unsigned int i;
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->n_elems; i++)
     {
         matrix->h_mem[i] = value;
     }
@@ -169,7 +169,7 @@ void TQ_Matrix_Eyes(struct TQ_Matrix *matrix)
     unsigned int i, j;
     unsigned int indices[matrix->num_dims];
 
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->n_elems; i++)
     {
         __TQ_Matrix_PosToIndex(*matrix, i, indices);
         j = 1;
@@ -192,7 +192,7 @@ void TQ_Matrix_Eyes(struct TQ_Matrix *matrix)
 void TQ_Matrix_Ones(struct TQ_Matrix *matrix)
 {
     unsigned int i;
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->n_elems; i++)
     {
         matrix->h_mem[i] = 1.0f;
     }
@@ -201,7 +201,7 @@ void TQ_Matrix_Ones(struct TQ_Matrix *matrix)
 void TQ_Matrix_Zeros(struct TQ_Matrix *matrix)
 {
     unsigned int i;
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->n_elems; i++)
     {
         matrix->h_mem[i] = 0.0f;
     }
@@ -215,7 +215,7 @@ void TQ_Matrix_Rand(struct TQ_Matrix *matrix, float min, float max)
     float rand_val;
     float range = max - min;
 
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->n_elems; i++)
     {
         rand_val = (float)rand() / (float)RAND_MAX;
         matrix->h_mem[i] = rand_val * range + min;
@@ -227,7 +227,7 @@ void TQ_Matrix_Unif(struct TQ_Matrix *matrix)
     unsigned int i;
     srand(time(NULL));
 
-    for (i = 0; i < matrix->dims_prod; i++)
+    for (i = 0; i < matrix->n_elems; i++)
     {
         matrix->h_mem[i] = (float)rand() / (float)RAND_MAX;
     }
@@ -419,7 +419,7 @@ void TQ_Matrix_Apply(struct TQ_Matrix input,
     unsigned int i;
     TQ_Matrix_Create(output, input.dimensions, input.num_dims, input.type);
 
-    for (i = 0; i < input.dims_prod; i++)
+    for (i = 0; i < input.n_elems; i++)
     {
         output->h_mem[i] = function(input.h_mem[i]);
     }
