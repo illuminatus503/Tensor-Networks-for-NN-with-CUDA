@@ -15,6 +15,8 @@ int main(int argc, char **argv)
     TQ_set_value_vector(vector, 3, (void *)&integer_val);
     TQ_print_vector(vector);
 
+    // Kquita
+
     printf("Se ha insertado el valor %d en el vector\n",
            *(int *)TQ_get_value_vector(vector, 3));
 
