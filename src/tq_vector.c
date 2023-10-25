@@ -5,16 +5,26 @@
 
 TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype)
 {
-    size_t dtype_bytes;
+    size_t dtype_bytes = 0;
     TQ_Vector *new_vector;
 
-    if (dtype == TQ_INT)
+    switch (dtype)
     {
+    case TQ_INT:
         dtype_bytes = sizeof(int);
-    }
-    else if (dtype == TQ_FLOAT)
-    {
+        break;
+
+    case TQ_FLOAT:
         dtype_bytes = sizeof(float);
+        break;
+
+    case TQ_DOUBLE:
+        dtype_bytes = sizeof(double);
+        break;
+
+    case TQ_LONG:
+        dtype_bytes = sizeof(long);
+        break;
     }
 
     // Initialization
@@ -74,38 +84,49 @@ void TQ_set_value_vector(TQ_Vector *vector,
 void __TQ_print(TQ_Vector *vector)
 {
     size_t i;
-    char *fmt;
-
     int *idata;
+    long *ldata;
     float *fdata;
+    double *ddata;
+
+    printf(BEGIN_VECT);
 
     switch (vector->dtype)
     {
     case TQ_INT:
         idata = (int *)vector->data;
-        fmt = "%d ";
-
-        printf(BEGIN_VECT);
         for (i = 0; i < vector->n_size; i++)
         {
-            printf(fmt, idata[i]);
+            printf(VECTOR_FMT_DTYPE_INT, idata[i]);
+        }
+
+        break;
+
+    case TQ_LONG:
+        ldata = (long *)vector->data;
+        for (i = 0; i < vector->n_size; i++)
+        {
+            printf(VECTOR_FMT_DTYPE_LONG, ldata[i]);
         }
 
         break;
 
     case TQ_FLOAT:
         fdata = (float *)vector->data;
-        fmt = "%3.6f ";
-
-        printf(BEGIN_VECT);
         for (i = 0; i < vector->n_size; i++)
         {
-            printf(fmt, fdata[i]);
+            printf(VECTOR_FMT_DTYPE_FLOAT, fdata[i]);
         }
         break;
 
-    default:
-        return;
+    case TQ_DOUBLE:
+        ddata = (double *)vector->data;
+        for (i = 0; i < vector->n_size; i++)
+        {
+            printf(VECTOR_FMT_DTYPE_DOUBLE, ddata[i]);
+        }
+
+        break;
     }
 
     printf(END_VECT);

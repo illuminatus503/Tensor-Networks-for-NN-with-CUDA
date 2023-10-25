@@ -6,11 +6,17 @@
 // String repr. of a vector.
 #define BEGIN_VECT "< "
 #define END_VECT ">\n"
+#define VECTOR_FMT_DTYPE_INT "%d "
+#define VECTOR_FMT_DTYPE_LONG "%ld "
+#define VECTOR_FMT_DTYPE_FLOAT "%3.6f "
+#define VECTOR_FMT_DTYPE_DOUBLE "%3.15lf "
 
 enum TQ_DTYPE
 {
     TQ_INT,
-    TQ_FLOAT
+    TQ_LONG,
+    TQ_FLOAT,
+    TQ_DOUBLE
 } typedef TQ_DTYPE;
 
 struct TQ_Vector
