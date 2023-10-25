@@ -6,7 +6,7 @@
 #include "tq_dtype.h"
 
 // String repr. of a vector.
-#define BEGIN_VECT "< "
+#define BEGIN_VECT "<"
 #define END_VECT ">\n"
 
 struct TQ_Vector

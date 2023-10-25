@@ -5,7 +5,7 @@
 
 /**
  * @brief Crea una tupla vacía. Solo con fines de ser modificada internamente.
- * 
+ *
  * @param n_size Tamaño de la tupla, en número de datos.
  * @param dtype Tipo de datos de la tupla
  * @return TQ_Tuple* La tupla en sí misma
@@ -90,6 +90,10 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         for (i = 0; i < tuple->n_size; i++)
         {
             printf(FMT_DTYPE_INT, idata[i]);
+            if (i < tuple->n_size - 1)
+            {
+                printf(", ");
+            }
         }
 
         break;
@@ -99,6 +103,10 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         for (i = 0; i < tuple->n_size; i++)
         {
             printf(FMT_DTYPE_LONG, ldata[i]);
+            if (i < tuple->n_size - 1)
+            {
+                printf(", ");
+            }
         }
 
         break;
@@ -108,6 +116,10 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         for (i = 0; i < tuple->n_size; i++)
         {
             printf(FMT_DTYPE_FLOAT, fdata[i]);
+            if (i < tuple->n_size - 1)
+            {
+                printf(", ");
+            }
         }
         break;
 
@@ -116,6 +128,10 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         for (i = 0; i < tuple->n_size; i++)
         {
             printf(FMT_DTYPE_DOUBLE, ddata[i]);
+            if (i < tuple->n_size - 1)
+            {
+                printf(", ");
+            }
         }
 
         break;

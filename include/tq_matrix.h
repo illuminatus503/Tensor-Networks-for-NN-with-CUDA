@@ -5,7 +5,7 @@
 #include "tq_tuple.h"
 #include "tq_dtype.h"
 
-#define BEGIN_MATRIX "[ "
+#define BEGIN_MATRIX "["
 #define END_MATRIX "]"
 
 struct TQ_Matrix

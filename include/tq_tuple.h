@@ -6,7 +6,7 @@
 #include "tq_dtype.h"
 
 // String repr. of a TUPLE.
-#define BEGIN_TUPLE "( "
+#define BEGIN_TUPLE "("
 #define END_TUPLE ")\n"
 
 struct TQ_Tuple

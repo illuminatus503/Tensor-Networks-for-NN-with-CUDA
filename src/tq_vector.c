@@ -98,6 +98,10 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_INT, idata[i]);
+            if (i< vector->n_size-1)
+            {
+                printf(", ");
+            }
         }
 
         break;
@@ -107,6 +111,10 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_LONG, ldata[i]);
+            if (i< vector->n_size-1)
+            {
+                printf(", ");
+            }
         }
 
         break;
@@ -116,6 +124,10 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_FLOAT, fdata[i]);
+            if (i< vector->n_size-1)
+            {
+                printf(", ");
+            }
         }
         break;
 
@@ -124,6 +136,10 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_DOUBLE, ddata[i]);
+            if (i< vector->n_size-1)
+            {
+                printf(", ");
+            }
         }
 
         break;
