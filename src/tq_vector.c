@@ -3,7 +3,7 @@
 
 #include "../include/tq_vector.h"
 
-TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype)
+TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE_VECTOR dtype)
 {
     size_t dtype_bytes = 0;
     TQ_Vector *new_vector;
@@ -38,7 +38,7 @@ TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype)
     return new_vector;
 }
 
-TQ_Vector *TQ_create_from_array_vector(void *values, size_t n_size, TQ_DTYPE dtype)
+TQ_Vector *TQ_create_vector_from_array(void *values, size_t n_size, TQ_DTYPE_VECTOR dtype)
 {
     TQ_Vector *new_vector;
 
@@ -81,7 +81,7 @@ void TQ_set_value_vector(TQ_Vector *vector,
     *((char *)vector->data + index * vector->dtype_bytes) = *(char *)value;
 }
 
-void __TQ_print(TQ_Vector *vector)
+void __TQ_print_vector(TQ_Vector *vector)
 {
     size_t i;
     int *idata;
@@ -147,7 +147,7 @@ void TQ_print_vector(TQ_Vector *vector)
     }
 
     // Print the vector to display
-    __TQ_print(vector);
+    __TQ_print_vector(vector);
 }
 
 void TQ_delete_vector(TQ_Vector **vector)

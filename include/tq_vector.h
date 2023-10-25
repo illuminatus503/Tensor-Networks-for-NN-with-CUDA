@@ -1,5 +1,5 @@
-#ifndef __TQ_TUPLE_H_
-#define __TQ_TUPLE_H_
+#ifndef __TQ_VECTOR_H_
+#define __TQ_VECTOR_H_
 
 #include <stdlib.h>
 
@@ -11,17 +11,17 @@
 #define VECTOR_FMT_DTYPE_FLOAT "%3.6f "
 #define VECTOR_FMT_DTYPE_DOUBLE "%3.15lf "
 
-enum TQ_DTYPE
+enum TQ_DTYPE_VECTOR
 {
     TQ_INT,
     TQ_LONG,
     TQ_FLOAT,
     TQ_DOUBLE
-} typedef TQ_DTYPE;
+} typedef TQ_DTYPE_VECTOR;
 
 struct TQ_Vector
 {
-    TQ_DTYPE dtype;
+    TQ_DTYPE_VECTOR dtype;
     size_t dtype_bytes;
 
     size_t n_size;
@@ -37,7 +37,7 @@ struct TQ_Vector
  * @param dtype The datatype of the contents of the vector.
  * @return TQ_Vector* The new vector itself.
  */
-TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype);
+TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE_VECTOR dtype);
 
 /**
  * @brief Create a vector from an array. Copy the contents
@@ -48,7 +48,7 @@ TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype);
  * @param dtype The datatype of the contents of the vector.
  * @return TQ_Vector* The new vector itself.
  */
-TQ_Vector *TQ_create_from_array_vector(void *values, size_t n_size, TQ_DTYPE dtype);
+TQ_Vector *TQ_create_vector_from_array(void *values, size_t n_size, TQ_DTYPE_VECTOR dtype);
 
 /**
  * @brief Get an indexed value from the vector.

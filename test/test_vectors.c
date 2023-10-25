@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     printf("Se ha borrado un vector\n");
 
     float values[5] = {0.3, 0.2, 0.1, 0.0, -0.1};
-    vector = TQ_create_from_array_vector((void *)values, 5, TQ_FLOAT);
+    vector = TQ_create_vector_from_array((void *)values, 5, TQ_FLOAT);
     TQ_print_vector(vector);
     TQ_delete_vector(&vector);
 
