@@ -3,25 +3,15 @@
 
 #include <stdlib.h>
 
+#include "tq_dtype.h"
+
 // String repr. of a TUPLE.
 #define BEGIN_TUPLE "( "
 #define END_TUPLE ")\n"
-#define TUPLE_FMT_DTYPE_INT "%d "
-#define TUPLE_FMT_DTYPE_LONG "%ld "
-#define TUPLE_FMT_DTYPE_FLOAT "%3.6f "
-#define TUPLE_FMT_DTYPE_DOUBLE "%3.15lf "
-
-enum TQ_DTYPE_TUPLE
-{
-    TQ_INT,
-    TQ_LONG,
-    TQ_FLOAT,
-    TQ_DOUBLE
-} typedef TQ_DTYPE_TUPLE;
 
 struct TQ_Tuple
 {
-    TQ_DTYPE_TUPLE dtype;
+    TQ_DTYPE dtype;
     size_t dtype_bytes;
 
     size_t n_size;
@@ -39,7 +29,16 @@ struct TQ_Tuple
  * @param dtype The datatype of the contents of the TUPLE.
  * @return TQ_Tuple* The new TUPLE itself.
  */
-TQ_Tuple *TQ_create_tuple_from_array(void *values, size_t n_size, TQ_DTYPE_TUPLE dtype);
+TQ_Tuple *TQ_create_tuple_from_array(void *values, size_t n_size, TQ_DTYPE dtype);
+
+/**
+ * @brief Get an indexed value from the tuple.
+ *
+ * @param tuple The tuple itself.
+ * @param index The index to access to.
+ * @return long The indexed value from the tuple.
+ */
+void *TQ_get_value_tuple(TQ_Tuple *tuple, size_t index);
 
 /**
  * @brief Print a TUPLE to display.

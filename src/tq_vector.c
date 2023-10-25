@@ -3,7 +3,7 @@
 
 #include "../include/tq_vector.h"
 
-TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE_VECTOR dtype)
+TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype)
 {
     size_t dtype_bytes = 0;
     TQ_Vector *new_vector;
@@ -38,7 +38,7 @@ TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE_VECTOR dtype)
     return new_vector;
 }
 
-TQ_Vector *TQ_create_vector_from_array(void *values, size_t n_size, TQ_DTYPE_VECTOR dtype)
+TQ_Vector *TQ_create_vector_from_array(void *values, size_t n_size, TQ_DTYPE dtype)
 {
     TQ_Vector *new_vector;
 
@@ -97,7 +97,7 @@ void __TQ_print_vector(TQ_Vector *vector)
         idata = (int *)vector->data;
         for (i = 0; i < vector->n_size; i++)
         {
-            printf(VECTOR_FMT_DTYPE_INT, idata[i]);
+            printf(FMT_DTYPE_INT, idata[i]);
         }
 
         break;
@@ -106,7 +106,7 @@ void __TQ_print_vector(TQ_Vector *vector)
         ldata = (long *)vector->data;
         for (i = 0; i < vector->n_size; i++)
         {
-            printf(VECTOR_FMT_DTYPE_LONG, ldata[i]);
+            printf(FMT_DTYPE_LONG, ldata[i]);
         }
 
         break;
@@ -115,7 +115,7 @@ void __TQ_print_vector(TQ_Vector *vector)
         fdata = (float *)vector->data;
         for (i = 0; i < vector->n_size; i++)
         {
-            printf(VECTOR_FMT_DTYPE_FLOAT, fdata[i]);
+            printf(FMT_DTYPE_FLOAT, fdata[i]);
         }
         break;
 
@@ -123,7 +123,7 @@ void __TQ_print_vector(TQ_Vector *vector)
         ddata = (double *)vector->data;
         for (i = 0; i < vector->n_size; i++)
         {
-            printf(VECTOR_FMT_DTYPE_DOUBLE, ddata[i]);
+            printf(FMT_DTYPE_DOUBLE, ddata[i]);
         }
 
         break;

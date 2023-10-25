@@ -1,6 +1,6 @@
 # CC compiler options:
 CC=gcc
-CC_FLAGS= -Wall -g -O3 -lm
+CC_FLAGS= -Wall -g -O2 -lm
 CC_LIBS=
 
 ## Project file structure ##

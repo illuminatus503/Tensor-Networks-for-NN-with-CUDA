@@ -3,23 +3,70 @@
 
 #include "tq_vector.h"
 #include "tq_tuple.h"
+#include "tq_dtype.h"
 
-enum TQ_DTYPE_MATRIX
+#define BEGIN_MATRIX "[ "
+#define END_MATRIX "]"
+
+struct TQ_Matrix
 {
-    TQ_INT,
-    TQ_LONG,
-    TQ_FLOAT,
-    TQ_DOUBLE
-} typedef TQ_DTYPE_MATRIX;
+    TQ_Vector *data; // Vector que mantiene la estructura matriz
+    TQ_Tuple *shape; // Tupla de dimensiones
+    TQ_DTYPE dtype;  // Tipo de datos de la matriz
+} typedef TQ_Matrix;
 
-struct TQ_matrix
-{
-    TQ_Vector *data;
+/**
+ * @brief Create an empty matrix given its size.
+ * Initialized to all 0s.
+ *
+ * @param shape The dimensions of the matrix.
+ * @param dtype The datatype of the contents of the matrix.
+ * @return TQ_Matrix* The new matrix itself.
+ */
+TQ_Matrix *TQ_create_empty_matrix(TQ_Tuple *shape, TQ_DTYPE dtype);
 
-    TQ_Tuple *shape;
+/**
+ * @brief Create a matrix from an array. Copy the contents
+ * of the array into a matrix.
+ *
+ * @param values The value array to cast into a matrix, as a flat array.
+ * @param shape The dimensions of the matrix.
+ * @param dtype The datatype of the contents of the matrix.
+ * @return TQ_Matrix* The new matrix itself.
+ */
+TQ_Matrix *TQ_create_matrix_from_array(void *values, TQ_Tuple *shape, TQ_DTYPE dtype);
 
-    TQ_DTYPE_MATRIX dtype;
-    size_t dtype_bytes;
-} typedef TQ_matrix;
+/**
+ * @brief Get an indexed value from the matrix.
+ *
+ * @param matrix The matrix itself.
+ * @param indexes The indexes to access to.
+ * @return long The indexed value from the matrix.
+ */
+void *TQ_get_value_matrix(TQ_Matrix *matrix, TQ_Tuple *indexes);
+
+/**
+ * @brief Set a value in the matrix, at some index.
+ *
+ * @param matrix The matrix itself.
+ * @param indexes The indexes in which to write.
+ * @param value The value to be writen in the matrix.
+ */
+void TQ_set_value_matrix(TQ_Matrix *matrix, TQ_Tuple *indexes, void *value);
+
+/**
+ * @brief Print a matrix to display.
+ *
+ * @param matrix The matrix itself.
+ */
+void TQ_print_matrix(TQ_Matrix *matrix);
+
+/**
+ * @brief Delete a matrix structure from memory, with all its
+ * contents.
+ *
+ * @param matrix The matrix itself.
+ */
+void TQ_delete_matrix(TQ_Matrix **matrix);
 
 #endif

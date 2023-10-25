@@ -10,7 +10,7 @@
  * @param dtype Tipo de datos de la tupla
  * @return TQ_Tuple* La tupla en sí misma
  */
-TQ_Tuple *__TQ_create_empty_tuple(size_t n_size, TQ_DTYPE_TUPLE dtype)
+TQ_Tuple *__TQ_create_empty_tuple(size_t n_size, TQ_DTYPE dtype)
 {
     size_t dtype_bytes = 0;
     TQ_Tuple *new_tuple;
@@ -45,7 +45,7 @@ TQ_Tuple *__TQ_create_empty_tuple(size_t n_size, TQ_DTYPE_TUPLE dtype)
     return new_tuple;
 }
 
-TQ_Tuple *TQ_create_tuple_from_array(void *values, size_t n_size, TQ_DTYPE_TUPLE dtype)
+TQ_Tuple *TQ_create_tuple_from_array(void *values, size_t n_size, TQ_DTYPE dtype)
 {
     TQ_Tuple *new_tuple;
 
@@ -60,6 +60,17 @@ TQ_Tuple *TQ_create_tuple_from_array(void *values, size_t n_size, TQ_DTYPE_TUPLE
     memcpy(new_tuple->data, (void *)values, new_tuple->n_size_bytes);
 
     return new_tuple;
+}
+
+void *TQ_get_value_tuple(TQ_Tuple *tuple, size_t index)
+{
+    if (index < 0 || index >= tuple->n_size)
+    {
+        fprintf(stderr, "IndexError (in line %d): Index out of bounds.", __LINE__ + 4);
+        exit(EXIT_FAILURE);
+    }
+
+    return (char *)(tuple->data) + index * tuple->dtype_bytes;
 }
 
 void __TQ_print_tuple(TQ_Tuple *tuple)
@@ -78,7 +89,7 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         idata = (int *)tuple->data;
         for (i = 0; i < tuple->n_size; i++)
         {
-            printf(TUPLE_FMT_DTYPE_INT, idata[i]);
+            printf(FMT_DTYPE_INT, idata[i]);
         }
 
         break;
@@ -87,7 +98,7 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         ldata = (long *)tuple->data;
         for (i = 0; i < tuple->n_size; i++)
         {
-            printf(TUPLE_FMT_DTYPE_LONG, ldata[i]);
+            printf(FMT_DTYPE_LONG, ldata[i]);
         }
 
         break;
@@ -96,7 +107,7 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         fdata = (float *)tuple->data;
         for (i = 0; i < tuple->n_size; i++)
         {
-            printf(TUPLE_FMT_DTYPE_FLOAT, fdata[i]);
+            printf(FMT_DTYPE_FLOAT, fdata[i]);
         }
         break;
 
@@ -104,7 +115,7 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         ddata = (double *)tuple->data;
         for (i = 0; i < tuple->n_size; i++)
         {
-            printf(TUPLE_FMT_DTYPE_DOUBLE, ddata[i]);
+            printf(FMT_DTYPE_DOUBLE, ddata[i]);
         }
 
         break;
