@@ -10,8 +10,10 @@ int main(int argc, char **argv)
     printf("Se ha creado una matriz\n");
 
     printf("Imprimimos la matrix: \n");
+
     printf("Forma vector: \n");
     TQ_print_vector(matrix->data);
+
     printf("Forma tensor: \n");
     TQ_print_matrix(matrix);
 
@@ -19,11 +21,29 @@ int main(int argc, char **argv)
     printf("Se ha eliminado una matriz\n");
 
     matrix = TQ_create_matrix_from_array((double[]){3.141592, 2.718281, 2.718281, 3.141592},     // inline init of an array
-                                         TQ_create_tuple_from_array((long[]){2, 2}, 2, TQ_LONG), // inline init of a tuple
+                                         TQ_create_tuple_from_array((long[]){2, 2}, 2, TQ_LONG), // inline init of a tuple: shape
                                          TQ_DOUBLE);
     printf("Creamos una matriz a partir de un vector plano:\n");
-
     TQ_print_matrix(matrix);
+
+    TQ_delete_matrix(&matrix);
+    printf("Se ha eliminado una matriz\n");
+
+    matrix = TQ_create_matrix_from_array((double[]){3.141592, 2.718281, 2.718281, 3.141592, 3.141592, 2.718281, 2.718281, 3.141592}, // inline init of an array
+                                         TQ_create_tuple_from_array((long[]){2, 2, 2}, 3, TQ_LONG),                                  // inline init of a tuple: shape
+                                         TQ_DOUBLE);
+    printf("Creamos una matriz a partir de un vector plano:\n");
+    TQ_print_matrix(matrix);
+
+    TQ_delete_matrix(&matrix);
+    printf("Se ha eliminado una matriz\n");
+
+    matrix = TQ_create_matrix_from_array((double[]){3.141592, 2.718281},                            // inline init of an array
+                                         TQ_create_tuple_from_array((long[]){1, 2, 1}, 3, TQ_LONG), // inline init of a tuple: shape
+                                         TQ_DOUBLE);
+    printf("Creamos una matriz a partir de un vector plano:\n");
+    TQ_print_matrix(matrix);
+
     TQ_delete_matrix(&matrix);
     printf("Se ha eliminado una matriz\n");
 

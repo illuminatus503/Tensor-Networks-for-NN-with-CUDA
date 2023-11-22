@@ -29,6 +29,7 @@ void TQ_print_tensor_recursive(void *data,
                                const char *end)
 {
     size_t i, j;
+    size_t subarray_size;
 
     if (depth == ndims - 1)
     {
@@ -63,7 +64,14 @@ void TQ_print_tensor_recursive(void *data,
                     printf(" ");
                 }
             }
-            data = (void *)((char *)data + dtype_bytes);
+
+            // Calculate the size of the entire sub-array at this depth
+            subarray_size = 1;
+            for (j = depth + 1; j < ndims; j++)
+            {
+                subarray_size *= dims[j];
+            }
+            data = (void *)((char *)data + subarray_size * dtype_bytes);
         }
         printf("%s", end);
     }
