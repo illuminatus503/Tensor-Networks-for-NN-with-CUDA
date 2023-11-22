@@ -10,6 +10,9 @@ void TQ_print_tensor_element(void *data, TQ_DTYPE dtype)
     case TQ_LONG:
         printf(FMT_DTYPE_LONG, *((long *)data));
         break;
+    case TQ_ULONG:
+        printf(FMT_DTYPE_ULONG, *((unsigned long *)data));
+        break;
     case TQ_FLOAT:
         printf(FMT_DTYPE_FLOAT, *((float *)data));
         break;

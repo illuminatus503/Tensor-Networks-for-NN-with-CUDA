@@ -32,6 +32,10 @@ TQ_Tuple *__TQ_create_empty_tuple(size_t n_size, TQ_DTYPE dtype)
     case TQ_LONG:
         dtype_bytes = sizeof(long);
         break;
+
+    case TQ_ULONG:
+        dtype_bytes = sizeof(unsigned long);
+        break;
     }
 
     // Initialization
@@ -45,7 +49,7 @@ TQ_Tuple *__TQ_create_empty_tuple(size_t n_size, TQ_DTYPE dtype)
     return new_tuple;
 }
 
-TQ_Tuple *TQ_create_tuple_from_array(void *values, size_t n_size, TQ_DTYPE dtype)
+TQ_Tuple *TQ_newtuple(void *values, size_t n_size, TQ_DTYPE dtype)
 {
     TQ_Tuple *new_tuple;
 
@@ -78,6 +82,7 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
     size_t i;
     int *idata;
     long *ldata;
+    unsigned long *ludata;
     float *fdata;
     double *ddata;
 
@@ -103,6 +108,19 @@ void __TQ_print_tuple(TQ_Tuple *tuple)
         for (i = 0; i < tuple->n_size; i++)
         {
             printf(FMT_DTYPE_LONG, ldata[i]);
+            if (i < tuple->n_size - 1)
+            {
+                printf(", ");
+            }
+        }
+
+        break;
+
+    case TQ_ULONG:
+        ludata = (unsigned long *)tuple->data;
+        for (i = 0; i < tuple->n_size; i++)
+        {
+            printf(FMT_DTYPE_ULONG, ludata[i]);
             if (i < tuple->n_size - 1)
             {
                 printf(", ");

@@ -23,7 +23,7 @@ struct TQ_Matrix
  * @param dtype The datatype of the contents of the matrix.
  * @return TQ_Matrix* The new matrix itself.
  */
-TQ_Matrix *TQ_create_empty_matrix(TQ_Tuple *shape, TQ_DTYPE dtype);
+TQ_Matrix *TQ_emptymat(TQ_Tuple *shape, TQ_DTYPE dtype);
 
 /**
  * @brief Create a matrix from an array. Copy the contents
@@ -34,7 +34,7 @@ TQ_Matrix *TQ_create_empty_matrix(TQ_Tuple *shape, TQ_DTYPE dtype);
  * @param dtype The datatype of the contents of the matrix.
  * @return TQ_Matrix* The new matrix itself.
  */
-TQ_Matrix *TQ_create_matrix_from_array(void *values, TQ_Tuple *shape, TQ_DTYPE dtype);
+TQ_Matrix *TQ_newmatrix(void *values, TQ_Tuple *shape, TQ_DTYPE dtype);
 
 /**
  * @brief Get an indexed value from the matrix.

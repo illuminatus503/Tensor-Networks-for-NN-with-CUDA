@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "include/tq_vector.h"
+#include "../include/tq_vector.h"
 
 int main(int argc, char **argv)
 {
-    TQ_Vector *vector = TQ_create_empty_vector(10, TQ_INT);
+    TQ_Vector *vector = TQ_emptyvec(10, TQ_INT);
     printf("Se ha generado un vector\n");
 
     TQ_print_vector(vector);
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     printf("Se ha borrado un vector\n");
 
     float values[5] = {0.3, 0.2, 0.1, 0.0, -0.1};
-    vector = TQ_create_vector_from_array((void *)values, 5, TQ_FLOAT);
+    vector = TQ_newvec((void *)values, 5, TQ_FLOAT);
     TQ_print_vector(vector);
     TQ_delete_vector(&vector);
 

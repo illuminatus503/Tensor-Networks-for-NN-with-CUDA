@@ -3,6 +3,7 @@
 
 #define FMT_DTYPE_INT "%d"
 #define FMT_DTYPE_LONG "%ld"
+#define FMT_DTYPE_ULONG "%lu"
 #define FMT_DTYPE_FLOAT "%3.6f"
 #define FMT_DTYPE_DOUBLE "%3.15lf"
 
@@ -10,6 +11,7 @@ enum TQ_DTYPE
 {
     TQ_INT,
     TQ_LONG,
+    TQ_ULONG,
     TQ_FLOAT,
     TQ_DOUBLE
 } typedef TQ_DTYPE;

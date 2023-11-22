@@ -3,7 +3,7 @@
 
 #include "../include/tq_vector.h"
 
-TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype)
+TQ_Vector *TQ_emptyvec(size_t n_size, TQ_DTYPE dtype)
 {
     size_t dtype_bytes = 0;
     TQ_Vector *new_vector;
@@ -25,6 +25,10 @@ TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype)
     case TQ_LONG:
         dtype_bytes = sizeof(long);
         break;
+
+    case TQ_ULONG:
+        dtype_bytes = sizeof(unsigned long);
+        break;
     }
 
     // Initialization
@@ -38,7 +42,7 @@ TQ_Vector *TQ_create_empty_vector(size_t n_size, TQ_DTYPE dtype)
     return new_vector;
 }
 
-TQ_Vector *TQ_create_vector_from_array(void *values, size_t n_size, TQ_DTYPE dtype)
+TQ_Vector *TQ_newvec(void *values, size_t n_size, TQ_DTYPE dtype)
 {
     TQ_Vector *new_vector;
 
@@ -48,7 +52,7 @@ TQ_Vector *TQ_create_vector_from_array(void *values, size_t n_size, TQ_DTYPE dty
         exit(EXIT_FAILURE);
     }
 
-    new_vector = TQ_create_empty_vector(n_size, dtype);
+    new_vector = TQ_emptyvec(n_size, dtype);
 
     memcpy(new_vector->data, (void *)values, new_vector->n_size_bytes);
 
@@ -58,7 +62,7 @@ TQ_Vector *TQ_create_vector_from_array(void *values, size_t n_size, TQ_DTYPE dty
 void *TQ_get_value_vector(TQ_Vector *vector,
                           size_t index)
 {
-    if (index < 0 || index >= vector->n_size)
+    if (index >= vector->n_size)
     {
         fprintf(stderr, "IndexError (in line %d): Index out of bounds.", __LINE__ + 4);
         exit(EXIT_FAILURE);
@@ -71,14 +75,14 @@ void TQ_set_value_vector(TQ_Vector *vector,
                          size_t index,
                          void *value)
 {
-    if (index < 0 || index >= vector->n_size)
+    if (index >= vector->n_size)
     {
         fprintf(stderr, "IndexError (in line %d): Index out of bounds.", __LINE__ + 4);
         exit(EXIT_FAILURE);
     }
 
     // Copy some bytes to the memory
-    *((char *)vector->data + index * vector->dtype_bytes) = *(char *)value;
+    memcpy((char *)vector->data + index * vector->dtype_bytes, value, vector->dtype_bytes);
 }
 
 void __TQ_print_vector(TQ_Vector *vector)
@@ -86,6 +90,7 @@ void __TQ_print_vector(TQ_Vector *vector)
     size_t i;
     int *idata;
     long *ldata;
+    unsigned long *ludata;
     float *fdata;
     double *ddata;
 
@@ -98,7 +103,7 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_INT, idata[i]);
-            if (i< vector->n_size-1)
+            if (i < vector->n_size - 1)
             {
                 printf(", ");
             }
@@ -111,7 +116,20 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_LONG, ldata[i]);
-            if (i< vector->n_size-1)
+            if (i < vector->n_size - 1)
+            {
+                printf(", ");
+            }
+        }
+
+        break;
+
+    case TQ_ULONG:
+        ludata = (unsigned long *)vector->data;
+        for (i = 0; i < vector->n_size; i++)
+        {
+            printf(FMT_DTYPE_ULONG, ludata[i]);
+            if (i < vector->n_size - 1)
             {
                 printf(", ");
             }
@@ -124,7 +142,7 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_FLOAT, fdata[i]);
-            if (i< vector->n_size-1)
+            if (i < vector->n_size - 1)
             {
                 printf(", ");
             }
@@ -136,7 +154,7 @@ void __TQ_print_vector(TQ_Vector *vector)
         for (i = 0; i < vector->n_size; i++)
         {
             printf(FMT_DTYPE_DOUBLE, ddata[i]);
-            if (i< vector->n_size-1)
+            if (i < vector->n_size - 1)
             {
                 printf(", ");
             }

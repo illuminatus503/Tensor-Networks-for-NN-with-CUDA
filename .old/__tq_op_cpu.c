@@ -3,7 +3,7 @@
 
 #include "../include/__tq_op_cpu.h"
 
-unsigned long __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
+size_t __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
                                      unsigned int *indices,
                                      unsigned int num_ind)
 {
@@ -19,7 +19,7 @@ unsigned long __TQ_Matrix_IndexToPos(struct TQ_Matrix matrix,
 }
 
 void __TQ_Matrix_PosToIndex(struct TQ_Matrix matrix,
-                            unsigned int position,
+                            size_t position,
                             unsigned int *indices)
 {
     unsigned long i;

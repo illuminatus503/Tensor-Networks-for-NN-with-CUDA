@@ -29,7 +29,7 @@ struct TQ_Tuple
  * @param dtype The datatype of the contents of the TUPLE.
  * @return TQ_Tuple* The new TUPLE itself.
  */
-TQ_Tuple *TQ_create_tuple_from_array(void *values, size_t n_size, TQ_DTYPE dtype);
+TQ_Tuple *TQ_newtuple(void *values, size_t n_size, TQ_DTYPE dtype);
 
 /**
  * @brief Get an indexed value from the tuple.
