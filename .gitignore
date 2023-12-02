@@ -1,5 +1,7 @@
 .vscode/*
 data/*
 bin/*
+run.dSYM/*
 *.o
 run
+test_complex

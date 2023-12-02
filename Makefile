@@ -1,6 +1,6 @@
 # CC compiler options:
-CC=gcc
-CC_FLAGS= -Wall -g -O2 -lm
+CC=g++
+CC_FLAGS= -Wall -g -O2 -std=c++11 -lm
 CC_LIBS=
 
 ## Project file structure ##
@@ -15,7 +15,7 @@ INC_DIR = include
 # Target executable name:
 BIN = run
 # Object files: 
-SRC_C := $(wildcard $(SRC_DIR)/*.c) main.c
+SRC_C := $(wildcard $(SRC_DIR)/*.cpp) main.cpp
 OBJS_C := $(SRC_C:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 .PHONY: clean
