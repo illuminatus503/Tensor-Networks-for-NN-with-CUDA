@@ -35,5 +35,5 @@ $(OBJ_DIR):
 
 # Clean objects in object directory.
 clean:
-	$(RM) -rv $(BIN) $(OBJ_DIR)
+	$(RM) -rv $(BIN) $(OBJ_DIR) $(BIN).dSYM
 

@@ -1,12 +1,38 @@
 #include "include/complex.hpp"
-#include "include/complex_linalg.hpp"
-
-#include "include/tensor.hpp"
+#include "include/real.hpp"
+#include "include/matrix.hpp"
 
 #include <iostream>
 
 int main()
 {
+    // ! Real number algebra
+    // Real number algebra
+    Real<int> r1_int(-3); // Using a negative value for demonstration
+    Real<int> r2_int(1);
+
+    std::cout << "Integer Real r1 + r2 = " << r1_int + r2_int << std::endl;
+
+    Real<float> r1_float(-3.5); // Using a negative value for demonstration
+    Real<float> r2_float(1.2);
+
+    std::cout << "Float Real r1 + r2 = " << r1_float + r2_float << std::endl;
+
+    Real<float> r1(-3.0); // Using a negative value for demonstration
+    Real<float> r2(1.0);
+
+    // Basic Arithmetic Operations
+    std::cout << "r1 + r2 = " << r1 + r2 << std::endl;
+    std::cout << "r1 - r2 = " << r1 - r2 << std::endl;
+    std::cout << "r1 * r2 = " << r1 * r2 << std::endl;
+    std::cout << "r1 / r2 = " << r1 / r2 << std::endl;
+
+    // Absolute value of Real Numbers
+    std::cout << "Absolute value of r1 = " << Real<float>::abs(r1) << std::endl;
+    std::cout << "Absolute value of r2 = " << Real<float>::abs(r2) << std::endl;
+    std::cout << std::endl;
+
+    // ! Complex number algebra
     Complex<int> c1_int(3, 2);
     Complex<int> c2_int(1, 7);
 
@@ -27,53 +53,57 @@ int main()
     std::cout << "c1 / c2 = " << c1 / c2 << std::endl;
 
     // Magnitude of a Complex Number
-    std::cout << "Magnitude of c1 = " << magnitude(c1) << std::endl;
-    std::cout << "Magnitude of c2 = " << magnitude(c2) << std::endl;
+    std::cout << "Magnitude of c1 = " << Complex<float>::abs(c1) << std::endl;
+    std::cout << "Magnitude of c2 = " << Complex<float>::abs(c2) << std::endl;
 
     // Conjugate of a Complex Number
-    std::cout << "Conjugate of c1 = " << conjugate(c1) << std::endl;
-    std::cout << "Conjugate of c2 = " << conjugate(c2) << std::endl;
+    std::cout << "Conjugate of c1 = " << Complex<float>::conjugate(c1) << std::endl;
+    std::cout << "Conjugate of c2 = " << Complex<float>::conjugate(c2) << std::endl;
+    std::cout << std::endl;
 
-    // Defining a tensor
-    Tensor<Complex<float>> tensor(2, 3);
-    tensor.setElement(0, 0, Complex<float>(1.0, 2.0));
-    tensor.setElement(0, 1, Complex<float>(3.0, 4.0));
+    // ! Matrix algebra
+    // Defining a matrix
+    Matrix<Complex<float>> matrix(2, 3);
+    matrix[{0, 0}] = Complex<float>(1.0, 2.0);
+    matrix[{0, 1}] = Complex<float>(3.0, 4.0);
+    matrix[{1, 0}] = Complex<float>(5.0, 6.0);
+    matrix[{1, 1}] = Complex<float>(7.0, 8.0);
 
-    // Printing the tensor
-    std::cout << "Tensor Contents:" << std::endl;
-    std::cout << tensor; // Using the overloaded << operator
+    // Printing the matrix
+    std::cout << "Matrix Contents:" << std::endl;
+    std::cout << matrix; // Using the overloaded << operator
 
-    tensor.setElement(0, 0, Complex<float>(1.0, 2.0));
-    tensor.setElement(0, 1, Complex<float>(3.0, 4.0));
-    tensor.setElement(1, 0, Complex<float>(5.0, 6.0));
-    tensor.setElement(1, 1, Complex<float>(7.0, 8.0));
+    Matrix<Complex<float>> negatedMatrix = -matrix;
 
-    Tensor<Complex<float>> negatedTensor = -tensor;
+    std::cout << "Original Matrix:" << std::endl
+              << matrix;
+    std::cout << "Negated Matrix:" << std::endl
+              << negatedMatrix;
 
-    std::cout << "Original Tensor:" << std::endl
-              << tensor;
-    std::cout << "Negated Tensor:" << std::endl
-              << negatedTensor;
+    Matrix<Complex<float>> matrix1(2, 2);
+    matrix1[{0, 0}] = Complex<float>(1.0, 2.0);
+    matrix1[{0, 1}] = Complex<float>(3.0, 4.0);
+    matrix1[{1, 0}] = Complex<float>(5.0, 6.0);
+    matrix1[{1, 1}] = Complex<float>(7.0, 8.0);
 
-    Tensor<Complex<float>> tensor1(2, 2);
-    tensor1.setElement(0, 0, Complex<float>(1.0, 2.0));
-    tensor1.setElement(0, 1, Complex<float>(3.0, 4.0));
-    tensor1.setElement(1, 0, Complex<float>(5.0, 6.0));
-    tensor1.setElement(1, 1, Complex<float>(7.0, 8.0));
+    Matrix<Complex<float>> matrix2(2, 2);
+    matrix2[{0, 0}] = Complex<float>(1.0, 1.0);
+    matrix2[{0, 1}] = Complex<float>(1.0, 1.0);
+    matrix2[{1, 0}] = Complex<float>(1.0, 1.0);
+    matrix2[{1, 1}] = Complex<float>(1.0, 1.0);
 
-    Tensor<Complex<float>> tensor2(2, 2);
-    tensor2.setElement(0, 0, Complex<float>(1.0, 1.0));
-    tensor2.setElement(0, 1, Complex<float>(1.0, 1.0));
-    tensor2.setElement(1, 0, Complex<float>(1.0, 1.0));
-    tensor2.setElement(1, 1, Complex<float>(1.0, 1.0));
+    Matrix<Complex<float>> sum = matrix1 + matrix2;
+    Matrix<Complex<float>> difference = matrix1 - matrix2;
+    Matrix<Complex<float>> matmul = Matrix<Complex<float>>::matmul(matrix1, matrix2);
 
-    Tensor<Complex<float>> sum = tensor1 + tensor2;
-    Tensor<Complex<float>> difference = tensor1 - tensor2;
-
-    std::cout << "Sum of Tensors:" << std::endl
+    std::cout << "Sum of Matrices:" << std::endl
               << sum;
-    std::cout << "Difference of Tensors:" << std::endl
+    std::cout << "Difference of Matrices:" << std::endl
               << difference;
+    std::cout << "Product of Matrices:" << std::endl
+              << matmul;
+
+    std::cout << std::endl;
 
     return 0;
 }

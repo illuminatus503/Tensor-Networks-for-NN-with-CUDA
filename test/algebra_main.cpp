@@ -35,12 +35,12 @@ int main()
     std::cout << "Conjugate of c2 = " << conjugate(c2) << std::endl;
 
     // Defining a tensor
-    Tensor<Complex<float>> tensor(2, 3);
+    Matrix<Complex<float>> tensor(2, 3);
     tensor.setElement(0, 0, Complex<float>(1.0, 2.0));
     tensor.setElement(0, 1, Complex<float>(3.0, 4.0));
 
     // Printing the tensor
-    std::cout << "Tensor Contents:" << std::endl;
+    std::cout << "Matrix Contents:" << std::endl;
     std::cout << tensor; // Using the overloaded << operator
 
     tensor.setElement(0, 0, Complex<float>(1.0, 2.0));
@@ -48,27 +48,27 @@ int main()
     tensor.setElement(1, 0, Complex<float>(5.0, 6.0));
     tensor.setElement(1, 1, Complex<float>(7.0, 8.0));
 
-    Tensor<Complex<float>> negatedTensor = -tensor;
+    Matrix<Complex<float>> negatedTensor = -tensor;
 
-    std::cout << "Original Tensor:" << std::endl
+    std::cout << "Original Matrix:" << std::endl
               << tensor;
-    std::cout << "Negated Tensor:" << std::endl
+    std::cout << "Negated Matrix:" << std::endl
               << negatedTensor;
 
-    Tensor<Complex<float>> tensor1(2, 2);
+    Matrix<Complex<float>> tensor1(2, 2);
     tensor1.setElement(0, 0, Complex<float>(1.0, 2.0));
     tensor1.setElement(0, 1, Complex<float>(3.0, 4.0));
     tensor1.setElement(1, 0, Complex<float>(5.0, 6.0));
     tensor1.setElement(1, 1, Complex<float>(7.0, 8.0));
 
-    Tensor<Complex<float>> tensor2(2, 2);
+    Matrix<Complex<float>> tensor2(2, 2);
     tensor2.setElement(0, 0, Complex<float>(1.0, 1.0));
     tensor2.setElement(0, 1, Complex<float>(1.0, 1.0));
     tensor2.setElement(1, 0, Complex<float>(1.0, 1.0));
     tensor2.setElement(1, 1, Complex<float>(1.0, 1.0));
 
-    Tensor<Complex<float>> sum = tensor1 + tensor2;
-    Tensor<Complex<float>> difference = tensor1 - tensor2;
+    Matrix<Complex<float>> sum = tensor1 + tensor2;
+    Matrix<Complex<float>> difference = tensor1 - tensor2;
 
     std::cout << "Sum of Tensors:" << std::endl
               << sum;

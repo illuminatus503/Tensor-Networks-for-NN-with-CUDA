@@ -2,14 +2,8 @@
 #define __COMPLEX_HPP_
 
 #include <iostream>
+#include <stdexcept>
 #include <cmath> // For sqrt
-
-/**
- * The usual approach is to define the entire template class,
- * including its methods, in the header file. This separation
- * technique is a workaround and should be used with understan-
- * ding of its limitations.
- */
 
 template <typename T>
 class Complex
@@ -51,10 +45,70 @@ public:
 
     Complex operator/(const Complex &other) const
     {
-        T denominator = other.m_real * other.m_real + other.m_imag * other.m_imag;
+        T denominator = sq_abs(other);
         T newReal = (m_real * other.m_real + m_imag * other.m_imag) / denominator;
         T newImag = (m_imag * other.m_real - m_real * other.m_imag) / denominator;
         return Complex(newReal, newImag);
+    }
+
+    // Overload the += operator
+    Complex &operator+=(const Complex &rhs)
+    {
+        this->m_real += rhs.m_real; // Assume 'real' and 'imag' are members of Complex
+        this->m_imag += rhs.m_imag;
+        return *this;
+    }
+
+    // Overload the -= operator
+    Complex &operator-=(const Complex &rhs)
+    {
+        m_real -= rhs.m_real;
+        m_imag -= rhs.m_imag;
+        return *this;
+    }
+
+    // Overload the *= operator
+    Complex &operator*=(const Complex &rhs)
+    {
+        float new_real = m_real * rhs.m_real - m_imag * rhs.m_imag;
+        float new_imag = m_real * rhs.m_imag + m_imag * rhs.m_real;
+        m_real = new_real;
+        m_imag = new_imag;
+        return *this;
+    }
+
+    // Overload the /= operator
+    Complex &operator/=(const Complex &rhs)
+    {
+        if (rhs.m_real == 0 && rhs.m_imag == 0)
+        {
+            throw std::runtime_error("Division by zero in complex division");
+        }
+
+        float denominator = sq_abs(rhs);
+        float new_real = (m_real * rhs.m_real + m_imag * rhs.m_imag) / denominator;
+        float new_imag = (m_imag * rhs.m_real - m_real * rhs.m_imag) / denominator;
+        m_real = new_real;
+        m_imag = new_imag;
+        return *this;
+    }
+
+    // Complex conjugate
+    static Complex conjugate(const Complex &c)
+    {
+        return Complex(c.m_real, -c.m_imag);
+    }
+
+    // The magnitude squearred of a complex number
+    static double sq_abs(const Complex &c)
+    {
+        return c.m_real * c.m_real + c.m_imag * c.m_imag;
+    }
+
+    // The magnitude of a complex number
+    static double abs(const Complex &c)
+    {
+        return std::sqrt(sq_abs(c));
     }
 
     friend std::ostream &operator<<(std::ostream &out, const Complex<T> &c)
