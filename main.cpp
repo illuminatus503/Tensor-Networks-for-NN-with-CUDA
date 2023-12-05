@@ -32,6 +32,33 @@ int main()
     std::cout << "Absolute value of r2 = " << Real<float>::abs(r2) << std::endl;
     std::cout << std::endl;
 
+    // ! Real numbers. Gradients
+    // Define x and y with initial values
+    Real<double> x(2.0); // Let's say x = 2.0
+    Real<double> y(3.0); // Let's say y = 3.0
+
+    // // Define the function f(x, y) = x + y
+    // Real<double> f = x + y;
+    // std::cout << "f = x + y" << std::endl;
+
+    // // Use the handler to perform the backward pass
+    // f.computeGradients();
+
+    // std::cout << "Gradient w.r.t x: " << x.getGradient() << std::endl; // Should be ∂f/∂x
+    // std::cout << "Gradient w.r.t y: " << y.getGradient() << std::endl; // Should be ∂f/∂y
+
+    // Define the function f(x, y) = x^2 * y + y + 1
+    Real<double> g = x * x * y + y + 1;
+    std::cout << "f(x, y) = x^2 * y + y + 1" << std::endl;
+
+    // Use the handler to perform the backward pass
+    g.computeGradients();
+
+    // Output the computed gradients using the getters
+    std::cout << "Gradient w.r.t x: " << x.getGradient() << std::endl; // Should be ∂f/∂x
+    std::cout << "Gradient w.r.t y: " << y.getGradient() << std::endl; // Should be ∂f/∂y
+    std::cout << std::endl;
+
     // ! Complex number algebra
     Complex<int> c1_int(3, 2);
     Complex<int> c2_int(1, 7);
