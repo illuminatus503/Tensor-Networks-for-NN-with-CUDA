@@ -14,7 +14,10 @@ public:
     // Constructor modified to create a node with a no-op backward function
     Real(T value = 0) : m_value(value), m_node(std::make_shared<Node<T>>(value, []() {})) {}
 
-    T value() const { return m_value; }
+    T value() const
+    {
+        return m_value;
+    }
 
     // Arithmetic Operators
     Real operator+(const Real &other) const
@@ -92,6 +95,52 @@ public:
         return *this;
     }
 
+    // Overloaded operators for Real + T, Real - T, etc.
+    Real operator+(T other) const
+    {
+        return *this + Real(other); // Reuse the existing Real + Real operator
+    }
+
+    Real operator-(T other) const
+    {
+        return *this - Real(other); // Reuse the existing Real - Real operator
+    }
+
+    Real operator*(T other) const
+    {
+        return *this * Real(other); // Reuse the existing Real * Real operator
+    }
+
+    Real operator/(T other) const
+    {
+        return *this / Real(other); // Reuse the existing Real / Real operator
+    }
+
+    // Unary Operators (Real<T> op= T) using existing binary operators
+    Real &operator+=(T other)
+    {
+        *this = *this + Real(other); // Using existing operator+
+        return *this;
+    }
+
+    Real &operator-=(T other)
+    {
+        *this = *this - Real(other); // Using existing operator-
+        return *this;
+    }
+
+    Real &operator*=(T other)
+    {
+        *this = *this * Real(other); // Using existing operator*
+        return *this;
+    }
+
+    Real &operator/=(T other)
+    {
+        *this = *this / Real(other); // Using existing operator/
+        return *this;
+    }
+
     // Absolute Value Function
     Real abs() const
     {
@@ -114,7 +163,7 @@ public:
         if (m_node)
         {
             m_node->m_gradient = 1.0; // Seed the gradient
-            m_node->computeGradients();
+            m_node->computeGradientsTopologically();
         }
     }
 
@@ -148,8 +197,8 @@ private:
     std::shared_ptr<Node<T>> createNodeForOperation(const Real &other, T resultValue, std::function<void()> backwardOp) const
     {
         auto newNode = std::make_shared<Node<T>>(resultValue, backwardOp);
-        newNode->m_parent_vector.push_back(this->m_node);
-        newNode->m_parent_vector.push_back(other.m_node);
+        newNode->addParent(this->m_node);
+        newNode->addParent(other.m_node);
         return newNode;
     }
 
@@ -157,9 +206,33 @@ private:
     std::shared_ptr<Node<T>> createNodeForOperation(T resultValue, std::function<void()> backwardOp) const
     {
         auto newNode = std::make_shared<Node<T>>(resultValue, backwardOp);
-        newNode->m_parent_vector.push_back(this->m_node);
+        newNode->addParent(this->m_node);
         return newNode;
     }
 };
+
+template <typename T>
+Real<T> operator+(T lhs, const Real<T> &rhs)
+{
+    return Real<T>(lhs) + rhs; // Reuse the existing Real + Real operator
+}
+
+template <typename T>
+Real<T> operator-(T lhs, const Real<T> &rhs)
+{
+    return Real<T>(lhs) - rhs; // Reuse the existing Real - Real operator
+}
+
+template <typename T>
+Real<T> operator*(T lhs, const Real<T> &rhs)
+{
+    return Real<T>(lhs) * rhs; // Reuse the existing Real * Real operator
+}
+
+template <typename T>
+Real<T> operator/(T lhs, const Real<T> &rhs)
+{
+    return Real<T>(lhs) / rhs; // Reuse the existing Real / Real operator
+}
 
 #endif // __REAL_HPP_

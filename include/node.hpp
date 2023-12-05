@@ -4,31 +4,62 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <unordered_set>
 
 template <typename T>
-struct Node
+class Node : public std::enable_shared_from_this<Node<T>> // Specify the template argument here
 {
 public:
-    Node(T val, std::function<void()> backwardOp) : m_value(val), m_gradient(0.0), m_backward_f(backwardOp) {}
+    Node(T val, std::function<void()> backwardOp)
+        : m_value(val), m_gradient(0.0), m_backward_f(backwardOp) {}
 
-    void computeGradients()
+    void addParent(std::shared_ptr<Node<T>> parent)
     {
-        // (1) Update my gradient
-        this->m_backward_f();
+        m_parent_vector.push_back(parent);
+    }
 
-        // (2) Update the gradients of my parents, based on my gradient
-        for (auto &weak_parent : this->m_parent_vector)
+    void computeGradientsTopologically()
+    {
+        std::vector<std::shared_ptr<Node<T>>> Stack;
+        std::unordered_set<std::shared_ptr<Node<T>>> visited;
+
+        // Call the recursive helper function to store Topological Sort
+        // starting from all vertices one by one
+        topologicalSortUtil(shared_from_this(), visited, Stack);
+
+        // Once sorted, compute gradients in reverse topological order
+        while (!Stack.empty())
         {
-            // Lock the weak_ptr to get a shared_ptr
-            if (auto parent = weak_parent.lock())
-            {
-                parent->computeGradients();
-            }
+            auto node = Stack.back();
+            Stack.pop_back();
+            node->m_backward_f();
         }
     }
 
     T m_value;
     T m_gradient;
+
+private:
+    void topologicalSortUtil(std::shared_ptr<Node<T>> node,
+                             std::unordered_set<std::shared_ptr<Node<T>>> &visited,
+                             std::vector<std::shared_ptr<Node<T>>> &Stack)
+    {
+        // Mark the current node as visited
+        visited.insert(node);
+
+        // Recur for all the vertices adjacent to this vertex
+        for (auto &parent : node->m_parent_vector)
+        {
+            auto parentPtr = parent.lock();
+            if (parentPtr && visited.find(parentPtr) == visited.end())
+            {
+                topologicalSortUtil(parentPtr, visited, Stack);
+            }
+        }
+
+        // Push current vertex to stack which stores result
+        Stack.push_back(node);
+    }
 
     std::vector<std::weak_ptr<Node>> m_parent_vector; // Using weak_ptr to avoid circular references
     std::function<void()> m_backward_f;
