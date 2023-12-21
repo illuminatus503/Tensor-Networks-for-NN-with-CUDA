@@ -1,6 +1,6 @@
 # CC compiler options:
 CC=g++
-CC_FLAGS= -Wall -g -O2 -std=c++11 -lm
+CC_FLAGS= -Wall -g -O2 -std=c++17 -lm
 CC_LIBS=
 
 ## Project file structure ##
